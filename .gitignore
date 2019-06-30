@@ -1,0 +1,6 @@
+node_modules/
+learn/
+server/package-lock.json
+server/node_modules
+front/package-lock.json
+front/node_modules

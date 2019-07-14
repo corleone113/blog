@@ -4,17 +4,27 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "nodemon ./src/api --watch src"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "http-proxy": "^1.17.0"
+    "@babel/preset-env": "^7.4.5",
+    "body-parser": "^1.19.0",
+    "cookie-parser": "^1.4.4",
+    "express": "^4.17.1",
+    "express-session": "^1.16.2",
+    "http-proxy": "^1.17.0",
+    "mongoose": "^5.6.2",
+    "svg-captcha": "^1.4.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.4.5",
+    "@babel/register": "^7.4.4",
     "clean-webpack-plugin": "^3.0.0",
     "cross-env": "^5.2.0",
+    "nodemon": "^1.19.1",
     "webpack": "^4.35.0",
     "webpack-cli": "^3.3.5"
   }

@@ -1,0 +1,26 @@
+.tab_container {
+    min-width: 25vw;
+    background: rgba(245, 232, 232, 0.9);
+    position: absolute;
+    right: 7vw;
+    top: 15vh;
+    z-index: 3;
+    border-radius: 4px;
+}
+
+.form_container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.form_container h3 {
+    text-align: center;
+}
+
+.form_container form {
+    /* border: 1px solid #999;
+    border-radius: 5px; */
+    width: 500px;
+    padding: 20px;
+}

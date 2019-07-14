@@ -49,7 +49,7 @@ mongoose.connect(`mongodb://${config.dbHost}:${config.dbPort}/blog`, {
         if (err) {
             console.error('err:', err);
         } else {
-            console.info(`===> api server is running at ${config.apiHost}:${config.apiPort} when ${new Date()}`)
+            console.info(`===> api server is running at ${config.apiHost}:${config.apiPort} when ${new Date().toLocaleString()}`)
         }
     });
 });

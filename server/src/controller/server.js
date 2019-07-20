@@ -18,18 +18,28 @@ const app = new Express();
 app.use(bodyParser.urlencoded({
     extended: false
 }));
+app.use(bodyParser.json());
 app.use(cookieParser('express_react_cookie'));
 app.use(session({
     secret: 'express_react_cookie',
     resave: true,
     saveUninitialized: true,
-    name:'corleone.sid',
+    name: 'corleone.sid',
     cookie: {
         maxAge: 60 * 1000 * 30
     } //过期时间
 }));
 
-
+app.all('*', function (req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With');
+    res.header('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
+    if (req.method == 'OPTIONS') {
+        res.send(200);
+    } else {
+        next();
+    }
+});
 //展示页面路由
 app.use('/', require('./public'));
 //管理页面路由

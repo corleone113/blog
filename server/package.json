@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon ./src/api --watch src"
+    "start": "nodemon ./src/controller --watch src"
   },
   "keywords": [],
   "author": "",

@@ -11,6 +11,9 @@ const router = Express.Router();
 //获取全部标签
 router.get('/getAllTags', function (req, res) {
     Tags.find(null, 'name').then(data => {
+        res.set({
+            'Access-Control-Allow-Origin': '*'
+        })
         responseClient(res, 200, 0, '请求成功', data);
     }).catch(err => {
         responseClient(res);
@@ -27,7 +30,7 @@ router.get('/getArticles', function (req, res) {
     if (tag) {
         searchCondition.tags = tag;
     }
-    if (isPublish === 'false') { 
+    if (isPublish === 'false') {
         searchCondition = null
     }
     let skip = (req.query.pageNum - 1) < 0 ? 0 : (req.query.pageNum - 1) * 5;

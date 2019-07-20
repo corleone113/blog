@@ -1,7 +1,6 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux'
-import { Tabs } from 'antd';
 import { actions as loginActions } from '../../reducers/loginReducer'
 // import { HashRouter, Link, Route } from 'react-router-dom';
 import Banner from '../../components/banner/Banner';
@@ -9,25 +8,29 @@ import LoginForm from './LoginForm';
 import style from './style.css';
 import { loginBannerImages as imgPaths } from '@/config/config';
 // import NotFound from '../../components/notFound/NotFound';
-
-const { TabPane } = Tabs;
 const { goto_signin, goto_signup, signup } = loginActions
 
-class LoginPage extends Component {
-
+class LoginPage extends PureComponent {
+    constructor(){
+        super();
+        this.state = {
+            extraH: '0px',
+        }
+    }
     handleSubmit = (event) => {
         event.preventDefault();
-        console.log(`Yes!!${this.props.to}`)
+        // console.log(`Yes!!${this.props.to}`)
         //thisis.loginForm.props.form.getFeildsValue is not a function
 
         const values = this.loginForm.props.form.getFieldsValue();
-        this.props.isLogin?null:this.props.signup(values);
+        this.props.isLogin ? null : this.props.signup(values);
         // this.props.dispatch({
         //             type:this.props.isLogin?"login/signin":'login/signup',
         //             payload:values
         //  });
     }
     changeTab = (key) => {
+        console.log('call the changetab...');
         this.props[key]();
     }
     changeLoginStatus = () => {
@@ -37,37 +40,34 @@ class LoginPage extends Component {
     returnHome = () => {
         this.props.history.push('/');
     }
+    getExtraH = () => {
+        const frm = document.getElementsByTagName('form')[0];
+        this.setState({extraH:getComputedStyle(frm).marginTop});
+    }
     render() {
         const isLogin = this.props.to === 'goto_signin';
+        const h = isLogin ? '0px' : parseFloat(this.state.extraH) * 2 + 'px';
         return (
             <>
-                <div className={style.tab_container}>
-                    <Tabs defaultActiveKey={this.props.to} onChange={this.changeTab} size='large' tabPosition='right'>
-                        <TabPane tab="登录" key="goto_signin">
-                            {/* 登录 */}
-                            {isLogin && <LoginForm
-                                wrappedComponentRef={instance => this.loginForm = instance}
-                                handleSubmit={this.handleSubmit}
-                                isLogin={isLogin}
-                                changeLoginStatus={this.changeLoginStatus}
-                                returnHome={this.returnHome}
-                            />}
-                        </TabPane>
-                        <TabPane tab="注册" key="goto_signup">
-                            {/* 注册 */}
-                            <LoginForm
-                                wrappedComponentRef={instance => this.loginForm = instance}
-                                handleSubmit={this.handleSubmit}
-                                isLogin={isLogin}
-                                changeLoginStatus={this.changeLoginStatus}
-                                returnHome={this.returnHome}
-                            />
-                        </TabPane>
-                    </Tabs>
-                </div>
-                <Banner imagePaths={imgPaths} size={{ height: '95vh' }} />
+                <LoginForm
+                    wrappedComponentRef={instance => this.loginForm = instance}
+                    handleSubmit={this.handleSubmit}
+                    isLogin={isLogin}
+                    changeLoginStatus={this.changeLoginStatus}
+                    returnHome={this.returnHome}
+                    capTs={this.props.par}
+                />
+                <Banner imagePaths={imgPaths} size={{ height: `calc(100vh + ${h})` }} />
             </>
         )
+    }
+
+    componentDidUpdate() {
+        this.getExtraH();
+    }
+
+    componentDidMount() {
+        this.getExtraH();
     }
 }
 function mapStateToProps(state) {

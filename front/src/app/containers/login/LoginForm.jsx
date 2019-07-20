@@ -69,9 +69,10 @@ class Login extends Component {
         const websiteOptions = this.state.autoCompleteOptions.map(option => (
             <AutoComplete.Option key={option}>{option}</AutoComplete.Option>
         ));
+        const capSrc = captchaUrl + '?ts=' + this.props.capTs;
         return (
             <div className={style.form_container}>
-                <Form onSubmit={handleSubmit} style={{ width: isLogin ? '380px' : '500px' }} {...formItemLayout}>
+                <Form onSubmit={handleSubmit} style={{ width: isLogin ? '380px' : '500px', marginTop: isLogin ? '10vh' : '3vh' }} {...formItemLayout}>
                     <h3>欢迎注册</h3>
                     <FormItem label="用户名" >
                         {
@@ -169,7 +170,7 @@ class Login extends Component {
                                     }
                                 </Col>
                                 <Col span={8}>
-                                    <img src={captchaUrl} alt="captcha" onClick={this.refreshCaptcha} />
+                                    <img src={capSrc} alt="captcha" onClick={this.refreshCaptcha} />
                                 </Col>
                             </Row>
                         </FormItem>

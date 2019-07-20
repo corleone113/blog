@@ -66,14 +66,14 @@ export default class Base {
         })
     }
 
-    update(cb) {
+    async update(cb) {
         const {
             ids,
             sets
         } = this.query;
         const datas = [];
-        const recursion = (i = 0) => {
-            this.Model.
+        for (let i = 0; i < ids.length; ++i) {
+            await this.Model.
             findByIdAndUpdate(ids[i], {
                 $set: {
                     ...sets[i]
@@ -90,11 +90,7 @@ export default class Base {
                     });
                 }
                 datas.push(data);
-                if (i < ids.length) {
-                    recursion(i + 1)
-                }
-            })
+            });
         }
-        recursion();
     }
 }

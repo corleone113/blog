@@ -31,7 +31,7 @@ router.put('/', (req, res) => {
         ids,
         sets
     } = req.body;
-    // console.log('the body:', req.body);
+    // console.log('the query:', req.query);
     new User(null, {
         ids,
         sets

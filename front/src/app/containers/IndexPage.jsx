@@ -9,7 +9,7 @@ import { actions } from '../reducers';
 import NotFound from '../components/notFound/NotFound';
 import Front from './front/Front';
 import Login from './login/Login';
-import style from './index.css'
+import style from './index.css';
 // import Loading from '../components/loading/Loading';
 const { clear_msg } = actions;
 const { Footer } = Layout;

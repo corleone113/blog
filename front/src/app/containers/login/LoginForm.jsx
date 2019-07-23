@@ -5,7 +5,7 @@ import { addressOptions } from './constans';
 import style from './style.css';
 
 const FormItem = Form.Item;
-const captchaUrl = 'http://localhost:2333/admin/login/captcha';
+const captchaUrl = 'http://localhost:2333/admin/captcha';
 
 @Form.create()
 class Login extends Component {

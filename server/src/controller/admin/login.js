@@ -5,7 +5,7 @@ import {
     md5,
     MD5_SUFFIX
 } from '../../util';
-import User from '../../service/user';
+import UserService from '../../service/user';
 import {
     status
 } from '../../constants';
@@ -44,10 +44,10 @@ router.post('/signup', (req, res) => {
     user.password = md5(user.password + MD5_SUFFIX);
     user.phone = prefix + '-' + phone;
     user.address = address.split(',').join('-');
-    new User(user, {
-        username: user.username,
-    }).create(result=>{
-        switch(result.status){
+    new UserService(user, {
+        username: user.username
+    }).create(result => {
+        switch (result.status) {
             case status.SUCCESS:
                 return responseClient(res, 200, 0, '注册成功!', result.data);
             case status.EXISTED:

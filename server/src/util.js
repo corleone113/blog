@@ -1,5 +1,8 @@
 import crypto from 'crypto'
-
+import {
+    status
+} from './constants'
+import role_resource from './models/role_resource';
 module.exports = {
     MD5_SUFFIX: 'fyosjdskfzjsdksnfkdfl.ker两只黄鹂鸣翠柳@#￥%……&^》》M',
     md5: function (pwd) {
@@ -13,5 +16,44 @@ module.exports = {
         responseData.message = message;
         responseData.data = data;
         isSVG ? res.status(httpCode).send(data) : res.status(httpCode).json(responseData);
+    },
+    initDB: async (batches) => {
+        for (let i = 0; i < batches.length; ++i) {
+            const {
+                Service,
+                initObj,
+                queryKey,
+                successMsg,
+                handleObj
+            } = batches[i];
+            const savedObjs = new Map();
+            const objs = [];
+            for (let j = 0; j < initObj.length; ++j) {
+                const role = initObj[j];
+                await new Service(role, {
+                    [queryKey]: role[queryKey]
+                }).create(r => {
+                    switch (r.status) {
+                        case status.SUCCESS:
+                            if (handleObj) {
+                                savedObjs.set(role.name, r.data)
+                                objs.push({
+                                    _id: r.data._id,
+                                    parent: role.parent,
+                                })
+                            }
+                            if (j === initObj.length - 1) {
+                                handleObj && handleObj(objs, savedObjs);
+                                return console.log(`${successMsg}`);
+                            }
+                            break;
+                        case status.QUERY_ERROR:
+                            return console.log(`发生错误！${r.data}`);
+                        default:
+                            return;
+                    }
+                })
+            }
+        }
     }
 }

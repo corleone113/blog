@@ -16,7 +16,7 @@ function* signup(payload) {
         type: defaultActions.FETCH_START
     });
     try {
-        return yield call(post, '/admin/login/signup', payload);
+        return yield call(post, '/admin/signup', payload);
     } catch (err) {
         yield put({
             type: defaultActions.SET_MESSAGE,

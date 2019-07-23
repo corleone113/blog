@@ -2,6 +2,10 @@ import {
     status
 } from '../constants'
 export default class Base {
+    constructor(model,query) {
+        this.model = model;
+        this.query = query;
+    }
     find(cb) {
         const {
             order,
@@ -44,7 +48,7 @@ export default class Base {
         this.Model.findOne(this.query).then(result => {
             if (!result) {
                 const entity = new this.Model(this.model);
-                console.log('model save:', entity.save((err, data) => {
+                entity.save((err, data) => {
                     if (err) {
                         throw new Error(err);
                     }
@@ -52,16 +56,16 @@ export default class Base {
                         data,
                         status: status.SUCCESS,
                     })
-                }))
+                })
             } else {
                 cb({
                     status: status.EXISTED
                 })
             }
         }).catch(err => {
-            console.error(err);
             cb({
-                status: status.QUERY_ERROR
+                status: status.QUERY_ERROR,
+                data: err
             })
         })
     }
@@ -91,6 +95,34 @@ export default class Base {
                 }
                 datas.push(data);
             });
+        }
+    }
+
+    async delete(cb) {
+        const {
+            ids
+        } = this.query;
+        const result = {
+            n: 0,
+            ok: 0,
+            deletedCount: 0
+        }
+        for (let i = 0; i < ids.length; ++i) {
+            await this.Model.deleteOne({
+                _id: ids[i]
+            }, (err, data) => {
+                if (data) {
+                    for (const k of Object.keys(result)) {
+                        result[k] += parseInt(data[k])
+                    }
+                }
+                if (i == ids.length - 1) {
+                    return cb({
+                        status: err ? status.UPDATE_ERROR : status.SUCCESS,
+                        data: result
+                    });
+                }
+            })
         }
     }
 }

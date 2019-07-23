@@ -5,3 +5,4 @@ server/node_modules
 front/package-lock.json
 front/node_modules
 front/src/test
+.vscode/

@@ -4,7 +4,7 @@ import user from './user';
 
 const router = express.Router();
 
-router.use('/login', login);
+router.use('/', login);
 router.use('/user',user);
 
 export default router

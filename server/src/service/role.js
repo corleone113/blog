@@ -1,8 +1,8 @@
 import Base from './base';
-import User from '../models/user';
+import Role from '../models/role';
 export default class extends Base {
     constructor(model,query) {
         super(model,query);
-        this.Model = User;
+        this.Model = Role;
     }
 }

@@ -7,12 +7,15 @@
  * 3：后端错误
  */
 import Express from 'express'
-import config from '../config/config'
+import config from './config'
 import bodyParser from 'body-parser'
 import mongoose from 'mongoose'
 import cookieParser from 'cookie-parser'
 import session from 'express-session'
-import admin from './admin'
+import admin from './controller/admin'
+import front, {
+    init
+} from './controller/public'
 
 const app = new Express();
 app.use(bodyParser.urlencoded({
@@ -29,10 +32,9 @@ app.use(session({
         maxAge: 60 * 1000 * 30
     } //过期时间
 }));
-
 app.all('*', function (req, res, next) {
     res.header('Access-Control-Allow-Origin', 'http://127.0.0.1:5500');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With,some-header');
     res.header('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
     if (req.method == 'OPTIONS') {
         res.send(200);
@@ -41,7 +43,7 @@ app.all('*', function (req, res, next) {
     }
 });
 //展示页面路由
-app.use('/', require('./public'));
+app.use('/', front);
 //管理页面路由
 app.use('/admin', admin);
 
@@ -54,6 +56,7 @@ mongoose.connect(`mongodb://${config.dbHost}:${config.dbPort}/blog`, {
         return;
     }
     console.log('数据库连接成功了!');
+    init();
 
     app.listen(config.apiPort, function (err) {
         if (err) {

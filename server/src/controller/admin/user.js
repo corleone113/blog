@@ -2,7 +2,7 @@ import express from 'express';
 import {
     responseClient
 } from '../../util';
-import UserService from '../../service/user';
+import userService from '../../service/user';
 import {
     status
 } from '../../constants';
@@ -17,7 +17,7 @@ router.get('/', (req, res) => {
         }
         query.order = obj;
     }
-    new UserService(null,query).find(r => {
+    userService.find(query,r => {
         switch (r.status) {
             case status.SUCCESS:
                 return responseClient(res, 200, 0, '', r.data);
@@ -32,10 +32,10 @@ router.put('/', (req, res) => {
         sets
     } = req.body;
     // console.log('the query:', req.query);
-    new UserService(null,{
+    userService.update({
         ids,
         sets
-    }).update(r => {
+    },r => {
         switch (r.status) {
             case status.SUCCESS:
                 return responseClient(res, 200, 0, '修改成功!', r.data);
@@ -54,9 +54,9 @@ router.delete('/:id?', (req, res) => {
     let dids = [];
     id ? dids.push(id) : '';
     dids = ids ? dids.concat(ids) : dids;
-    new UserService(null,{
+    userService.delete({
         ids:dids
-    }).delete(r => {
+    },r => {
         switch (r.status) {
             case status.SUCCESS:
                 return responseClient(res, 200, 0, '删除成功!', r.data);

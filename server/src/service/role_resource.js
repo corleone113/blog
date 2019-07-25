@@ -1,8 +1,9 @@
 import Base from './base';
 import RoleResource from '../models/role_resource';
-export default class extends Base {
-    constructor(model, query) {
-        super(model, query);
+class RoleResourceService extends Base {
+    constructor() {
+        super();
         this.Model = RoleResource;
     }
 }
+export default new RoleResourceService();

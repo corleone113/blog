@@ -1,8 +1,9 @@
 import Base from './base';
 import Resource from '../models/resource';
-export default class ResourceService extends Base {
-    constructor(model,query) {
-        super(model,query);
+class ResourceService extends Base {
+    constructor() {
+        super();
         this.Model = Resource;
     }
 }
+export default new ResourceService();

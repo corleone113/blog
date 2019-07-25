@@ -1,8 +1,9 @@
 import Base from './base';
 import User from '../models/user';
-export default class extends Base {
-    constructor(model,query) {
-        super(model,query);
+class UserService extends Base {
+    constructor() {
+        super();
         this.Model = User;
     }
 }
+export default new UserService();

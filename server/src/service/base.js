@@ -2,17 +2,17 @@ import {
     status
 } from '../constants'
 export default class Base {
-    constructor(model,query) {
-        this.model = model;
-        this.query = query;
-    }
-    find(cb) {
+    // constructor(model, query) {
+    //     this.model = model;
+    //     this.query = query;
+    // }
+    find(query,cb) {
         const {
             order,
             pageSize,
             pageNum,
             ...conditions
-        } = this.query;
+        } = query;
         const offset = (pageNum - 1) * pageSize;
         this.Model.
         count(conditions).
@@ -44,10 +44,10 @@ export default class Base {
         })
     }
 
-    create(cb) {
-        this.Model.findOne(this.query).then(result => {
+    create(model,query,cb) {
+        this.Model.findOne(query).then(result => {
             if (!result) {
-                const entity = new this.Model(this.model);
+                const entity = new this.Model(model);
                 entity.save((err, data) => {
                     if (err) {
                         throw new Error(err);
@@ -70,11 +70,11 @@ export default class Base {
         })
     }
 
-    async update(cb) {
+    async update(query,cb) {
         const {
             ids,
             sets
-        } = this.query;
+        } = query;
         const datas = [];
         for (let i = 0; i < ids.length; ++i) {
             await this.Model.
@@ -98,10 +98,10 @@ export default class Base {
         }
     }
 
-    async delete(cb) {
+    async delete(query,cb) {
         const {
             ids
-        } = this.query;
+        } = query;
         const result = {
             n: 0,
             ok: 0,

@@ -20,40 +20,62 @@ module.exports = {
     initDB: async (batches) => {
         for (let i = 0; i < batches.length; ++i) {
             const {
-                Service,
+                service,
                 initObj,
                 queryKey,
                 successMsg,
                 handleObj
             } = batches[i];
-            const savedObjs = new Map();
-            const objs = [];
-            for (let j = 0; j < initObj.length; ++j) {
-                const role = initObj[j];
-                await new Service(role, {
-                    [queryKey]: role[queryKey]
-                }).create(r => {
-                    switch (r.status) {
-                        case status.SUCCESS:
-                            if (handleObj) {
+            if (handleObj) {
+                const savedObjs = new Map();
+                const objs = [];
+                next(0);
+                function next(i) {
+                    const role = initObj[i];
+                    service.create(role, {
+                        [queryKey]: role[queryKey]
+                    }, r => {
+                        switch (r.status) {
+                            case status.SUCCESS:
                                 savedObjs.set(role.name, r.data)
                                 objs.push({
                                     _id: r.data._id,
                                     parent: role.parent,
                                 })
-                            }
-                            if (j === initObj.length - 1) {
-                                handleObj && handleObj(objs, savedObjs);
-                                return console.log(`${successMsg}`);
-                            }
-                            break;
-                        case status.QUERY_ERROR:
-                            return console.log(`发生错误！${r.data}`);
-                        default:
-                            return;
-                    }
-                })
+                                if (i === initObj.length - 1) {
+                                    handleObj(objs, savedObjs);
+                                    return console.log(`${successMsg}`);
+                                }
+                                next(i + 1);
+                                break;
+                            case status.QUERY_ERROR:
+                                return console.log(`发生错误！${r.data}`);
+                            default:
+                                return;
+                        }
+                    })
+                }
+            } else {
+                for (let j = 0; j < initObj.length; ++j) {
+                    const role = initObj[j];
+                    await service.create(role, {
+                        [queryKey]: role[queryKey]
+                    }, r => {
+                        switch (r.status) {
+                            case status.SUCCESS:
+                                if (j === initObj.length - 1) {
+                                    return console.log(`${successMsg}`);
+                                }
+                                break;
+                            case status.QUERY_ERROR:
+                                return console.log(`发生错误！${r.data}`);
+                            default:
+                                return;
+                        }
+                    })
+                }
             }
+
         }
     }
 }

@@ -1,9 +1,9 @@
 import Express from 'express'
 import Tags from '../models/tags'
 import Article from '../models/article'
-import UserService from '../service/user';
-import RoleService from '../service/role';
-import ResourceService from '../service/resource';
+import userService from '../service/user';
+import roleService from '../service/role';
+import resourceService from '../service/resource';
 import config from '../config'
 import {
     status
@@ -95,21 +95,21 @@ router.get('/getArticleDetail', (req, res) => {
 
 export function init() {
     initDB([{
-        Service: UserService,
+        service: userService,
         initObj: [adminUser],
         queryKey: 'username',
         successMsg: '初始化管理员账户成功!'
     }, {
-        Service: RoleService,
+        service: roleService,
         initObj: initRoles,
         queryKey: 'name',
         successMsg: '初始化角色成功!'
     }, {
-        Service: ResourceService,
+        service: resourceService,
         initObj: resources,
         queryKey: 'name',
         successMsg: '初始化资源成功!',
-        handleObj: (objs, saveObjs) => {
+        handleObj: async (objs, saveObjs) => {
             const ids = [],
                 sets = [];
             for (let i = 0; i < objs.length; ++i) {
@@ -121,10 +121,10 @@ export function init() {
                     })
                 }
             }
-            new ResourceService(null, {
+            await resourceService.update({
                 ids,
                 sets
-            }).update(r => {
+            }, r => {
                 switch (r.status) {
                     case status.SUCCESS:
                         return console.log('建立资源联系成功!');

@@ -6,3 +6,4 @@ front/package-lock.json
 front/node_modules
 front/src/test
 .vscode/
+package-lock.json

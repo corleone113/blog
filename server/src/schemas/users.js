@@ -1,7 +1,7 @@
 /**
  * 用户的表结构
  */
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
 
 export default new mongoose.Schema({
     username: String,

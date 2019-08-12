@@ -1,40 +1,40 @@
 import {
-    combineReducers
-} from 'redux'
+    combineReducers,
+} from 'redux';
 // import {users} from './adminManagerUser'
 import {
-    reducer as tags
+    reducer as tags,
 } from './tagReducer';
 import {
-    reducer as login
+    reducer as login,
 } from './loginReducer';
 // import {reducer as newArticle} from "./adminManagerNewArticle";
 // import {articles} from './adminManagerArticle'
 import {
-    adminActions
-} from './actionTypes'
+    adminActions,
+} from './actionTypes';
 
 const initialState = {
-    url: "/"
+    url: '/',
 };
 
 export const actions = {
     change_location_admin: function (url) {
         return {
             type: adminActions.ADMIN_URI_LOCATION,
-            data: url
-        }
-    }
+            data: url,
+        };
+    },
 };
 
 export function reducer(state = initialState, action) {
     switch (action.type) {
         case adminActions.ADMIN_URI_LOCATION:
             return {
-                ...state, url: action.data
+                ...state, url: action.data,
             };
         default:
-            return state
+            return state;
     }
 }
 
@@ -47,4 +47,4 @@ const admin = combineReducers({
     // articles
 });
 
-export default admin
+export default admin;

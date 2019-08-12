@@ -1,13 +1,13 @@
 import React, { PureComponent, } from 'react';
 import style from './style.css';
 
-export const ArticleListCell = (props) => (
+export const ArticleListCell = ( props ) => (
   // <div className={`${style.container} `} onClick={() => {
   //     props.history.push(`/detail/${props.data._id}`, { id: props.data._id }); props.getArticleDetail(props.data._id)
   // }}>
   <div className={`${style.container} `}
     onClick={() => {
-      props.history.push(`/detail/${props.data._id}`, { id: props.data._id, });
+      props.history.push( `/detail/${props.data._id}`, { id: props.data._id, } );
     }}
   >
     <div>
@@ -26,19 +26,19 @@ export const ArticleListCell = (props) => (
         <p>
           <span>
             <img alt="发表日期"
-              src={require('./calendar.png')}
+              src={require( './calendar.png' )}
             />
             {props.data.time}
           </span>
           <span>
             <img alt="阅读数"
-              src={require('./views.png')}
+              src={require( './views.png' )}
             />
             {props.data.viewCount}
           </span>
           <span>
             <img alt="评论数"
-              src={require('./comments.png')}
+              src={require( './comments.png' )}
             />
             {props.data.commentCount}
           </span>
@@ -56,13 +56,13 @@ export default class extends PureComponent {
     return (
       <div>
         {
-          this.props.data.map((item, index) => (
+          this.props.data.map( ( item, index ) => (
             <ArticleListCell data={item}
               getArticleDetail={this.props.getArticleDetail}
               history={this.props.history}
               key={index}
             />
-          ))
+          ) )
         }
       </div>
     );

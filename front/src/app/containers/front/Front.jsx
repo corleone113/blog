@@ -47,7 +47,7 @@ class Front extends Component {
       const { url, } = this.props.match;
       const toolbarPayload = {
         items: [{ title: '登录', todo: this.gotoPage(this.props.goto_signin), },
-          { title: '注册', todo: this.gotoPage(this.props.goto_signup), },],
+          { title: '注册', todo: this.gotoPage(this.props.goto_signup), }, ],
         history: this.props.history,
       };
       return (

@@ -5,6 +5,6 @@ import user from './user';
 const router = express.Router();
 
 router.use('/', login);
-router.use('/user',user);
+router.use('/user', user);
 
-export default router
+export default router;

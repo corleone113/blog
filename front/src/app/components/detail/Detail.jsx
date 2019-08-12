@@ -8,6 +8,11 @@ import style from './style.css';
 const { get_article_detail, } = actions;
 
 class Detail extends PureComponent {
+
+  componentDidMount() {
+    // console.log('did mount props:', this.props)
+    this.props.get_article_detail(this.props.location.state.id);
+  }
   render() {
     const { articleContent, title, author, viewCount, commentCount, time, } = this.props;
     return (
@@ -39,10 +44,6 @@ class Detail extends PureComponent {
     );
   }
 
-  componentDidMount() {
-    // console.log('did mount props:', this.props)
-    this.props.get_article_detail(this.props.location.state.id);
-  }
 }
 
 function mapStateToProps(state) {

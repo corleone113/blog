@@ -8,12 +8,12 @@ import { Provider, } from 'react-redux';
 // const old = document.getElementById('root');
 // old && document.body.removeChild(old);
 // document.body.appendChild(div);
-const root = document.getElementById('root');
+const root = document.getElementById( 'root' );
 const store = configureStore();
-render((
+render( (
   <Provider store={store}>
     <Index />
-  </Provider>), root);
-if (module.hot && process.env.NODE_ENV !== 'production') {
+  </Provider> ), root );
+if ( module.hot && process.env.NODE_ENV !== 'production' ) {
   module.hot.accept();
 }

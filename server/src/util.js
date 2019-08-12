@@ -1,12 +1,12 @@
-import crypto from 'crypto'
+import crypto from 'crypto';
 import {
-    status
-} from './constants'
+    status,
+} from './constants';
 module.exports = {
     MD5_SUFFIX: 'fyosjdskfzjsdksnfkdfl.ker两只黄鹂鸣翠柳@#￥%……&^》》M',
     md5: function (pwd) {
-        let md5 = crypto.createHash('md5');
-        return md5.update(pwd).digest('hex')
+        const md5 = crypto.createHash('md5');
+        return md5.update(pwd).digest('hex');
     },
     responseClient(res, httpCode = 500, code = 3, message = '服务端异常', data = {}) {
         const responseData = {};
@@ -23,26 +23,26 @@ module.exports = {
                 initObj,
                 queryKey,
                 successMsg,
-                handleObj
+                handleObj,
             } = batches[i];
             if (handleObj) {
                 const savedObjs = new Map();
                 const objs = [];
-                next(0);
+
                 function next(i) {
                     const role = initObj[i];
                     service.create(role, {
-                        [queryKey]: role[queryKey]
+                        [queryKey]: role[queryKey],
                     }, r => {
                         switch (r.status) {
                             case status.SUCCESS:
-                                savedObjs.set(role.name, r.data)
+                                savedObjs.set(role.name, r.data);
                                 objs.push({
                                     _id: r.data._id,
                                     parent: role.parent,
-                                })
+                                });
                                 if (i === initObj.length - 1) {
-                                    
+
                                     handleObj(objs, savedObjs);
                                     return console.log(`${successMsg}`);
                                 }
@@ -53,13 +53,14 @@ module.exports = {
                             default:
                                 return;
                         }
-                    })
+                    });
                 }
+                next(0);
             } else {
                 for (let j = 0; j < initObj.length; ++j) {
                     const role = initObj[j];
                     await service.create(role, {
-                        [queryKey]: role[queryKey]
+                        [queryKey]: role[queryKey],
                     }, r => {
                         switch (r.status) {
                             case status.SUCCESS:
@@ -72,10 +73,10 @@ module.exports = {
                             default:
                                 return;
                         }
-                    })
+                    });
                 }
             }
 
         }
-    }
-}
+    },
+};

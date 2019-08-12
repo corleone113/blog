@@ -1,14 +1,14 @@
 import express from 'express';
 import {
-    responseClient
+    responseClient,
 } from '../../util';
 import userService from '../../service/user';
 import {
-    status
+    status,
 } from '../../constants';
 const router = express.Router();
 router.get('/', (req, res) => {
-    const query = req.query;
+    const {query, } = req;
     if (query.order) {
         const arr = query.order.split(',');
         const obj = {};
@@ -17,7 +17,7 @@ router.get('/', (req, res) => {
         }
         query.order = obj;
     }
-    userService.find(query,r => {
+    userService.find(query, r => {
         switch (r.status) {
             case status.SUCCESS:
                 return responseClient(res, 200, 0, '', r.data);
@@ -25,38 +25,38 @@ router.get('/', (req, res) => {
                 return responseClient(res, 203, 1, '查询出错!', null);
         }
     });
-})
+});
 router.put('/', (req, res) => {
     const {
         ids,
-        sets
+        sets,
     } = req.body;
     // console.log('the query:', req.query);
     userService.update({
         ids,
-        sets
-    },r => {
+        sets,
+    }, r => {
         switch (r.status) {
             case status.SUCCESS:
                 return responseClient(res, 200, 0, '修改成功!', r.data);
             case status.UPDATE_ERROR:
                 return responseClient(res, 203, 1, '修改出错!', null);
         }
-    })
-})
+    });
+});
 router.delete('/:id?', (req, res) => {
     const {
-        id
+        id,
     } = req.params;
-    let {
-        ids
+    const {
+        ids,
     } = req.body;
     let dids = [];
     id ? dids.push(id) : '';
     dids = ids ? dids.concat(ids) : dids;
     userService.delete({
-        ids:dids
-    },r => {
+        ids:dids,
+    }, r => {
         switch (r.status) {
             case status.SUCCESS:
                 return responseClient(res, 200, 0, '删除成功!', r.data);
@@ -64,5 +64,5 @@ router.delete('/:id?', (req, res) => {
                 return responseClient(res, 203, 1, '删除出错!', null);
         }
     });
-})
+});
 export default router;

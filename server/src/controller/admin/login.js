@@ -3,11 +3,11 @@ import svgCaptcha from 'svg-captcha';
 import {
     responseClient,
     md5,
-    MD5_SUFFIX
+    MD5_SUFFIX,
 } from '../../util';
 import userService from '../../service/user';
 import {
-    status
+    status,
 } from '../../constants';
 
 const router = express.Router();
@@ -17,7 +17,7 @@ router.get('/captcha', (req, res) => {
     req.session.captcha = captObj.text;
     res.set({
         'Content-Type': 'image/svg+xml',
-    })
+    });
     responseClient(res, 200, 0, '请求成功', captObj.data);
 });
 
@@ -45,8 +45,8 @@ router.post('/signup', (req, res) => {
     user.phone = prefix + '-' + phone;
     user.address = address.split(',').join('-');
     userService.create(user, {
-        username: user.username
-    },result => {
+        username: user.username,
+    }, result => {
         switch (result.status) {
             case status.SUCCESS:
                 return responseClient(res, 200, 0, '注册成功!', result.data);
@@ -55,7 +55,7 @@ router.post('/signup', (req, res) => {
             case status.QUERY_ERROR:
                 return responseClient(res);
         }
-    })
+    });
 });
 
-export default router
+export default router;

@@ -10,49 +10,47 @@ import style from './style.css';
 
 const { get_article_list, get_article_detail, } = frontActions;
 class Home extends PureComponent {
-    static defaultProps = {
-      userInfo: {},
-      pageNum: 1,
-      total: 0,
-      articleList: [],
-    };
-    static propsTypes = {
-      pageNum: PropTypes.number.isRequired,
-      total: PropTypes.number.isRequired,
-      articleList: PropTypes.array.isRequired,
-    };
-    constructor() {
-      super();
-    }
-
-    render() {
-      const { tags, } = this.props;
-      localStorage.setItem('userInfo', JSON.stringify(this.props.userInfo));
-      return (
-        tags.length > 1 && this.props.match.params.tag && (tags.indexOf(this.props.match.params.tag) === -1 || this.props.location.pathname.lastIndexOf('\/') > 0) ? <Redirect to="/404" /> :
+  static defaultProps = {
+    userInfo: {},
+    pageNum: 1,
+    total: 0,
+    articleList: [],
+  };
+  static propsTypes = {
+    pageNum: PropTypes.number.isRequired,
+    total: PropTypes.number.isRequired,
+    articleList: PropTypes.array.isRequired,
+  };
+  constructor() {
+    super();
+  }
+  componentDidMount() {
+    this.props.get_article_list(this.props.match.params.tag || '');
+  }
+  render() {
+    const { tags, } = this.props;
+    localStorage.setItem('userInfo', JSON.stringify(this.props.userInfo));
+    return (
+      tags.length > 1 && this.props.match.params.tag && (tags.indexOf(this.props.match.params.tag) === -1 || this.props.location.pathname.lastIndexOf('/') > 0) ? <Redirect to="/404" /> :
         <div className={style.container}>
-            <ArticleList
+          <ArticleList
             data={this.props.articleList}
             getArticleDetail={this.props.get_article_detail}
             history={this.props.history}
           />
-            <div className={style.paginationContainer}>
+          <div className={style.paginationContainer}>
             <Pagination
-                current={this.props.pageNum}
-                defaultPageSize={5}
-                onChange={(pageNum) => {
-                  this.props.get_article_list(this.props.match.params.tag || '', pageNum);
-                }}
-                total={this.props.total}
-              />
+              current={this.props.pageNum}
+              defaultPageSize={5}
+              onChange={(pageNum) => {
+                this.props.get_article_list(this.props.match.params.tag || '', pageNum);
+              }}
+              total={this.props.total}
+            />
           </div>
-          </div>
-      );
-    }
-
-    componentDidMount() {
-      this.props.get_article_list(this.props.match.params.tag || '');
-    }
+        </div>
+    );
+  }
 }
 function mapStateToProps(state) {
   return {

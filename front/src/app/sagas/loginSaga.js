@@ -44,7 +44,7 @@ export function* signupFlow() {
       });
       continue;
     }
-    if (res.code == 1) {
+    if (res.code === 1) {
       yield put({
         type: defaultActions.SET_MESSAGE,
         msgContent: res.message,
@@ -52,11 +52,11 @@ export function* signupFlow() {
       });
       yield put({
         type: loginActions.GOTO_SIGNUP,
-        par:Date.now(),
+        par: Date.now(),
       });
       continue;
     }
-    if (res.code == 0) {
+    if (res.code === 0) {
       yield put({
         type: defaultActions.SET_MESSAGE,
         msgContent: res.message,

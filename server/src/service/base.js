@@ -1,12 +1,12 @@
 import {
-    status
-} from '../constants'
+    status,
+} from '../constants';
 export default class Base {
     // constructor(model, query) {
     //     this.model = model;
     //     this.query = query;
     // }
-    find(query,cb) {
+    find(query, cb) {
         const {
             order,
             pageSize,
@@ -21,14 +21,14 @@ export default class Base {
                 return cb({
                     status: status.QUERY_ERROR,
                     data: err,
-                })
+                });
             }
             const total = data;
             this.Model.
             find(conditions).
             sort({
                 ...order,
-                _id: 1
+                _id: 1,
             }).
             skip(offset).
             limit(parseInt(pageSize)).
@@ -37,14 +37,14 @@ export default class Base {
                     status: err ? status.QUERY_ERROR : status.SUCCESS,
                     data: err ? err : {
                         ...data,
-                        total
+                        total,
                     },
-                })
+                });
             });
-        })
+        });
     }
 
-    create(model,query,cb) {
+    create(model, query, cb) {
         this.Model.findOne(query).then(result => {
             if (!result) {
                 const entity = new this.Model(model);
@@ -55,42 +55,42 @@ export default class Base {
                     cb({
                         data,
                         status: status.SUCCESS,
-                    })
-                })
+                    });
+                });
             } else {
                 cb({
-                    status: status.EXISTED
-                })
+                    status: status.EXISTED,
+                });
             }
         }).catch(err => {
             cb({
                 status: status.QUERY_ERROR,
-                data: err
-            })
-        })
+                data: err,
+            });
+        });
     }
 
-    async update(query,cb) {
+    async update(query, cb) {
         const {
             ids,
-            sets
+            sets,
         } = query;
         const datas = [];
         for (let i = 0; i < ids.length; ++i) {
             await this.Model.
             findByIdAndUpdate(ids[i], {
                 $set: {
-                    ...sets[i]
-                }
+                    ...sets[i],
+                },
             }, {
                 new: true,
-                useFindAndModify: true
+                useFindAndModify: true,
             }, (err, data) => {
                 if (i === ids.length - 1) {
                     datas.push(data);
                     return cb({
                         status: err ? status.UPDATE_ERROR : status.SUCCESS,
-                        data: datas
+                        data: datas,
                     });
                 }
                 datas.push(data);
@@ -98,31 +98,31 @@ export default class Base {
         }
     }
 
-    async delete(query,cb) {
+    async delete(query, cb) {
         const {
-            ids
+            ids,
         } = query;
         const result = {
             n: 0,
             ok: 0,
-            deletedCount: 0
-        }
+            deletedCount: 0,
+        };
         for (let i = 0; i < ids.length; ++i) {
             await this.Model.deleteOne({
-                _id: ids[i]
+                _id: ids[i],
             }, (err, data) => {
                 if (data) {
                     for (const k of Object.keys(result)) {
-                        result[k] += parseInt(data[k])
+                        result[k] += parseInt(data[k]);
                     }
                 }
                 if (i == ids.length - 1) {
                     return cb({
                         status: err ? status.UPDATE_ERROR : status.SUCCESS,
-                        data: result
+                        data: result,
                     });
                 }
-            })
+            });
         }
     }
 }

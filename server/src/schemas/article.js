@@ -2,7 +2,7 @@
  * article 表结构
  **/
 
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
 
 module.exports = new mongoose.Schema({
     title: String, //文章标题
@@ -13,5 +13,5 @@ module.exports = new mongoose.Schema({
     coverImg: String, //封面图片
     author: String, //作者
     tags: Array, //标签
-    isPublish: Boolean //是否发布
+    isPublish: Boolean, //是否发布
 });

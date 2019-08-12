@@ -6,20 +6,20 @@
  * 2：客户端数据错误
  * 3：后端错误
  */
-import Express from 'express'
-import config from './config'
-import bodyParser from 'body-parser'
-import mongoose from 'mongoose'
-import cookieParser from 'cookie-parser'
-import session from 'express-session'
-import admin from './controller/admin'
+import Express from 'express';
+import config from './config';
+import bodyParser from 'body-parser';
+import mongoose from 'mongoose';
+import cookieParser from 'cookie-parser';
+import session from 'express-session';
+import admin from './controller/admin';
 import front, {
-    init
-} from './controller/public'
+    init,
+} from './controller/public';
 
 const app = new Express();
 app.use(bodyParser.urlencoded({
-    extended: false
+    extended: false,
 }));
 app.use(bodyParser.json());
 app.use(cookieParser('express_react_cookie'));
@@ -29,11 +29,11 @@ app.use(session({
     saveUninitialized: true,
     name: 'corleone.sid',
     cookie: {
-        maxAge: 60 * 1000 * 30
-    } //过期时间
+        maxAge: 60 * 1000 * 30,
+    }, //过期时间
 }));
 
-//跨域测试，不推荐的方式，使用代理才是最佳方案
+//跨域手段，不推荐的方式，使用代理才是最佳方案
 // app.all('*', function (req, res, next) {
 //     res.header('Access-Control-Allow-Origin', 'http://127.0.0.1:5500');
 //     res.header('Access-Control-Allow-Headers', 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With,some-header');
@@ -55,10 +55,10 @@ app.use('/admin', admin);
 
 mongoose.Promise = require('bluebird');
 mongoose.connect(`mongodb://${config.dbHost}:${config.dbPort}/blog`, {
-    useNewUrlParser: true
+    useNewUrlParser: true,
 }, function (err) {
     if (err) {
-        console.log(err, "数据库连接失败");
+        console.log(err, '数据库连接失败');
         return;
     }
     console.log('数据库连接成功了!');
@@ -68,7 +68,7 @@ mongoose.connect(`mongodb://${config.dbHost}:${config.dbPort}/blog`, {
         if (err) {
             console.error('err:', err);
         } else {
-            console.info(`===> api server is running at ${config.apiHost}:${config.apiPort} when ${new Date().toLocaleString()}`)
+            console.info(`===> api server is running at ${config.apiHost}:${config.apiPort} when ${new Date().toLocaleString()}`);
         }
     });
 });

@@ -1,26 +1,26 @@
 import axios from 'axios';
 
-let config = {
+const config = {
     baseURL: '/api',
     transformRequest: [
         function (data) {
             let ret = '';
-            for (let it in data) {
-                ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+            for (const it in data) {
+                ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&';
             }
-            return ret
-        }
+            return ret;
+        },
     ],
     transformResponse: [
         function (data) {
-            return data
-        }
+            return data;
+        },
     ],
     headers: {
-        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
     },
     timeout: 10000,
-    responseType: 'json'
+    responseType: 'json',
 };
 
 axios.interceptors.response.use(function(res){
@@ -30,9 +30,9 @@ axios.interceptors.response.use(function(res){
 
 
 export function get(url) {
-    return axios.get(url, config)
+    return axios.get(url, config);
 }
 
 export function post(url, data) {
-    return axios.post(url, data, config)
+    return axios.post(url, data, config);
 }

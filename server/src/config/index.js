@@ -9,29 +9,29 @@ module.exports = {
             parent: '',
             parent_id:'',
             route: '/admin/manage',
-            icon: 'desktop'
+            icon: 'desktop',
         },
         {
             name: '用户管理',
             parent: '权限管理',
             parent_id:'',
             route: '/admin/manage/user',
-            icon: 'user'
+            icon: 'user',
         },
         {
             name: '角色管理',
             parent: '权限管理',
             parent_id:'',
             route: '/admin/manage/role',
-            icon: 'team'
+            icon: 'team',
         },
         {
             name: '资源管理',
             parent: '权限管理',
             parent_id:'',
             route: '/admin/manage/resource',
-            icon: 'idcard'
-        }
+            icon: 'idcard',
+        },
     ],
     adminUser: {
         username: 'admin',
@@ -40,11 +40,11 @@ module.exports = {
         gender: 1,
         website: 'github.com',
         phone: '18928499214',
-        address: 'chengdu'
+        address: 'chengdu',
     },
     initRoles: [{
-        name: '系统管理员'
+        name: '系统管理员',
     }, {
-        name: '普通管理员'
-    }]
-}
+        name: '普通管理员',
+    }, ],
+};

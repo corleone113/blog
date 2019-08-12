@@ -5,20 +5,20 @@ export default class Banner extends PureComponent {
     // constructor() {
     //     super()
     // }
-    renderImage = (paths, size) => {
-      return paths.map((item, index) => (<div className={style.carouselImgContainer}
+    renderImage = ( paths, size ) => {
+      return paths.map( ( item, index ) => ( <div className={style.carouselImgContainer}
         key={index}
-      >
+                                             >
         <img src={item}
-          style={{...size,}}
+          style={{...size, }}
         />
-      </div>)
+      </div> )
       );
     }
     render() {
       return (
         <Carousel autoplay>
-          {this.renderImage(this.props.imagePaths, this.props.size)}
+          {this.renderImage( this.props.imagePaths, this.props.size )}
         </Carousel>
       );
     }

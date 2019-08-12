@@ -1,57 +1,57 @@
 import {
-    reducer as front
+    reducer as front,
 } from './frontReducer';
 import {
-    defaultActions
+    defaultActions,
 } from './actionTypes';
 import {
-    combineReducers
+    combineReducers,
 } from 'redux';
 import admin from './admin';
 const initialState = {
     isFetching: true,
     msg: {
         type: 1, //0失败，1成功
-        content: ''
+        content: '',
     },
-    userInfo: {}
-}
+    userInfo: {},
+};
 export const actions = {
     get_login: function (username, password) {
         return {
             type: defaultActions.USER_LOGIN,
             username,
-            password
-        }
+            password,
+        };
     },
     get_register: function (data) {
         return {
             type: defaultActions.USER_REGISTER,
-            data
-        }
+            data,
+        };
     },
     clear_msg: function () {
         return {
             type: defaultActions.SET_MESSAGE,
             msgType: 1,
-            msgContent: ''
-        }
+            msgContent: '',
+        };
     },
     user_auth: function () {
         return {
-            type: defaultActions.USER_AUTH
-        }
-    }
+            type: defaultActions.USER_AUTH,
+        };
+    },
 };
 export function reducer(state = initialState, action) {
     switch (action.type) {
         case defaultActions.FETCH_START:
             return {
-                ...state, isFetching: true
+                ...state, isFetching: true,
             };
         case defaultActions.FETCH_END:
             return {
-                ...state, isFetching: false
+                ...state, isFetching: false,
             };
         case defaultActions.SET_MESSAGE:
             return {
@@ -59,19 +59,19 @@ export function reducer(state = initialState, action) {
                 isFetching: false,
                     msg: {
                         type: action.msgType,
-                        content: action.msgContent
-                    }
+                        content: action.msgContent,
+                    },
             };
         case defaultActions.RESPONSE_USER_INFO:
             return {
-                ...state, userInfo: action.data
+                ...state, userInfo: action.data,
             };
         default:
-            return state
+            return state;
     }
 }
 export default combineReducers({
     front,
     globalState: reducer,
-    admin
-})
+    admin,
+});

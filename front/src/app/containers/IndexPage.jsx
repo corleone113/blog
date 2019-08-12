@@ -17,43 +17,43 @@ class IndexPage extends PureComponent {
   constructor(props) {
     super(props);
   }
-    openNotification = (type, message) => {
-      const that = this;
-      notification[type]({
-        message: message,
-        onClose: () => {
-          that.props.clear_msg();
-        },
-      });
-      this.props.clear_msg();
+  componentDidUpdate() {
+    if (this.props.notification && this.props.notification.content) {
+      this.props.notification.type === 1 ?
+        this.openNotification('success', this.props.notification.content) :
+        this.openNotification('error', this.props.notification.content);
     }
-    render() {
-      return (
-        <>
-          <Router>
-            <Switch>
-              <Route component={NotFound}
-                path="/404"
-              />
-              <Route component={Login}
-                path="/login"
-              />
-              <Route component={Front} />
-            </Switch>
-          </Router>
-          <Footer className={style.footer}>
-                    Corleone Blog @2019
+  }
+  openNotification = (type, message) => {
+    const that = this;
+    notification[type]({
+      message: message,
+      onClose: () => {
+        that.props.clear_msg();
+      },
+    });
+    this.props.clear_msg();
+  }
+  render() {
+    return (
+      <>
+        <Router>
+          <Switch>
+            <Route component={NotFound}
+              path="/404"
+            />
+            <Route component={Login}
+              path="/login"
+            />
+            <Route component={Front} />
+          </Switch>
+        </Router>
+        <Footer className={style.footer}>
+          Corleone Blog @2019
           </Footer>
-        </>
-      );
-    }
-    componentDidUpdate() {
-      if (this.props.notification && this.props.notification.content) {
-        this.props.notification.type === 1 ?
-          this.openNotification('success', this.props.notification.content) :
-          this.openNotification('error', this.props.notification.content);
-      }
-    }
+      </>
+    );
+  }
 }
 function mapStateToProps(state) {
   // debugger;

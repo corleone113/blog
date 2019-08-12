@@ -32,14 +32,14 @@ router.post('/signup', (req, res) => {
         ...user
     } = req.body;
     if (aggrement !== 'true') {
-        return responseClient(res, 203, 1, '请同意协议再注册!', '');
+        return responseClient(res, 202, 1, '请同意协议再注册!', '');
     }
     if (user.password !== repassword) {
-        return responseClient(res, 203, 1, '密码和确认密码不一致!', '');
+        return responseClient(res, 206, 1, '密码和确认密码不一致!', '');
     }
     console.log(captcha, req.session.captcha);
     if (!captcha || !req.session.captcha || captcha.toLowerCase() !== req.session.captcha.toLowerCase()) {
-        return responseClient(res, 203, 1, '验证码不正确或已过期!', '');
+        return responseClient(res, 206, 1, '验证码不正确或已过期!', '');
     }
     user.password = md5(user.password + MD5_SUFFIX);
     user.phone = prefix + '-' + phone;

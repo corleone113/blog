@@ -32,16 +32,22 @@ app.use(session({
         maxAge: 60 * 1000 * 30
     } //过期时间
 }));
-app.all('*', function (req, res, next) {
-    res.header('Access-Control-Allow-Origin', 'http://127.0.0.1:5500');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With,some-header');
-    res.header('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
-    if (req.method == 'OPTIONS') {
-        res.send(200);
-    } else {
-        next();
-    }
-});
+
+//跨域测试，不推荐的方式，使用代理才是最佳方案
+// app.all('*', function (req, res, next) {
+//     res.header('Access-Control-Allow-Origin', 'http://127.0.0.1:5500');
+//     res.header('Access-Control-Allow-Headers', 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With,some-header');
+//     res.header('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
+//     res.cookie('yiu','3453435yyyy',{
+//         domain:'http://localhost:3468',
+//         path:'/'
+//     })
+//     if (req.method == 'OPTIONS') {
+//         res.send(200);
+//     } else {
+//         next();
+//     }
+// });
 //展示页面路由
 app.use('/', front);
 //管理页面路由

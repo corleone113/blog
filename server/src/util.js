@@ -2,7 +2,6 @@ import crypto from 'crypto'
 import {
     status
 } from './constants'
-import role_resource from './models/role_resource';
 module.exports = {
     MD5_SUFFIX: 'fyosjdskfzjsdksnfkdfl.ker两只黄鹂鸣翠柳@#￥%……&^》》M',
     md5: function (pwd) {
@@ -43,6 +42,7 @@ module.exports = {
                                     parent: role.parent,
                                 })
                                 if (i === initObj.length - 1) {
+                                    
                                     handleObj(objs, savedObjs);
                                     return console.log(`${successMsg}`);
                                 }

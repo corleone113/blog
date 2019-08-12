@@ -1,20 +1,20 @@
 import {
-    fork
+  fork,
 } from 'redux-saga/effects';
 import {
-    getAllTagsFlow
+  getAllTagsFlow,
 } from './tagsSaga';
 import {
-    getArticlesListFlow,
-    getArticleDetailFlow
+  getArticlesListFlow,
+  getArticleDetailFlow,
 } from './frontSaga';
 import {
-    signupFlow
-} from './loginSaga'
+  signupFlow,
+} from './loginSaga';
 
 export default function* rootSaga() {
-    yield fork(getAllTagsFlow);
-    yield fork(getArticlesListFlow);
-    yield fork(getArticleDetailFlow);
-    yield fork(signupFlow);
+  yield fork(getAllTagsFlow);
+  yield fork(getArticlesListFlow);
+  yield fork(getArticleDetailFlow);
+  yield fork(signupFlow);
 }

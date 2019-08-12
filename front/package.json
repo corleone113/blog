@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "cross-env NODE_ENV=development node ./src/static_server",
+    "eslint": "eslint src --ext .jsx --fix",
     "build": "webpack --config ./webpack.dev.js"
   },
   "keywords": [],

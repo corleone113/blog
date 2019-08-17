@@ -26,14 +26,6 @@ router.get('/:type', async (req, res) => {
         query,
         params,
     } = req;
-    if (query.order) { // 将查询字符串中的排序的字符串转化为对象的形式，用于mongoose查询方法中使用
-        const arr = query.order.split(',');
-        const obj = {};
-        for (let i = 0; i < arr.length; i += 2) {
-            obj[arr[i]] = parseInt(arr[i + 1]);
-        }
-        query.order = obj;
-    }
     if (query.pageSize === 'n') {
         delete query.pageNum;
         delete query.pageSize;

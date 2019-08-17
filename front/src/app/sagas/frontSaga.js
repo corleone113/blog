@@ -14,7 +14,7 @@ import {
 export function* getArticlesListFlow(method) {
   while (true) {
     const req = yield take(frontActions.GET_ARTICLE_LIST);
-    const res = yield call(method, get, `/getArticles?pageNum=${req.pageNum}&isPublish=true&tag=${req.tag}`);
+    const res = yield call(method, get, `/getArticles?pageNum=${req.pageNum}&pageSize=${req.pageSize}&isPublish=true&tag=${req.tag}`);
     if (res) {
       if (res.code === 0) {
         res.data.pageNum = req.pageNum;

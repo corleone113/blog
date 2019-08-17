@@ -6,7 +6,6 @@ import ArticleList from '../../components/article/Articles';
 import PropTypes from 'prop-types';
 import style from './style.css';
 
-const { get_article_list, get_article_detail, } = frontActions;
 class Home extends PureComponent {
   static defaultProps = {
     userInfo: {},
@@ -66,5 +65,5 @@ function mapStateToProps(state) {
 
 export default connect(
   mapStateToProps,
-  { get_article_detail, get_article_list, }
+  frontActions
 )(Home);

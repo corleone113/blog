@@ -45,7 +45,7 @@ app.all('/admin/manage/*', async (req, res, next) => {
     try {
         if (!req.session.token) {
             console.log('过期会话:', req.session);
-            return responseClient(res, 200, 2, '会话已过期，请重新登录', null);
+            return responseClient(res, 203, 2, '会话已过期，请重新登录', null);
         }
         const data = fs.readFileSync(configPath);
         const secret = data.toString().match(/jwtSecret:'([\S\s]*)',/)[1];
@@ -77,7 +77,7 @@ mongoose.connect(`mongodb://${config.dbHost}:${config.dbPort}/blog`, {
         if (err) {
             console.error('err:', err);
         } else {
-            console.info(`===> api server is running at ${config.apiHost}:${config.apiPort} when ${new Date().toLocaleString()}`);
+            console.info(`===> api server is running at http://${config.apiHost}:${config.apiPort}/ when ${new Date().toLocaleString()}`);
         }
     });
 });

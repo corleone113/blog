@@ -9,9 +9,9 @@ export default class Base {
     //     this.model = model;
     //     this.query = query;
     // }
-    findAll(query) {
+    findAll(query, ...columns) {
         return new Promise((resolve, reject) => {
-            this.Model.find(query).exec((err, data) => {
+            this.Model.find(query, ...columns).exec((err, data) => {
                 if (err) reject(err);
                 const keys = Object.keys(this.Model.schema.obj);
                 const plain = [];
@@ -22,7 +22,15 @@ export default class Base {
             });
         });
     }
-    find(query, cb) {
+    find(query, cb, ...columns) {
+        if (query.order) { // 将查询字符串中的排序的字符串转化为对象的形式，用于mongoose查询方法中使用
+            const arr = query.order.split(',');
+            const obj = {};
+            for (let i = 0; i < arr.length; i += 2) {
+                obj[arr[i]] = parseInt(arr[i + 1]);
+            }
+            query.order = obj;
+        }
         const {
             order,
             pageSize,
@@ -41,7 +49,7 @@ export default class Base {
             }
             const total = data;
             this.Model.
-            find(conditions).
+            find(conditions, ...columns).
             sort({
                 ...order,
                 _id: 1,
@@ -52,8 +60,8 @@ export default class Base {
                 cb({
                     status: err ? status.QUERY_ERROR : status.SUCCESS,
                     data: err ? err : {
-                        list: Array.from(data),
                         total,
+                        list: Array.from(data),
                     },
                 });
             });
@@ -107,7 +115,7 @@ export default class Base {
                     datas.push(data);
                     return cb({
                         status: err ? status.UPDATE_ERROR : status.SUCCESS,
-                        data: datas,
+                        data: err ? err : data,
                     });
                 }
                 datas.push(data);

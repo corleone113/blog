@@ -14,8 +14,6 @@ import style from './style.css';
 import { homeBannerImages as imgPaths, } from '../../config/config';
 // import {homeBannerImages as imgPaths} from '../../../../config/config'
 
-const { get_article_list, get_all_tags, } = frontActions;
-const { goto_signin, goto_signup, } = loginActions;
 class Front extends Component {
   static defaultProps = {
     categories: [],
@@ -88,9 +86,7 @@ function mapStateToProps(state) {
 export default connect(
   mapStateToProps,
   {
-    get_all_tags,
-    get_article_list,
-    goto_signin,
-    goto_signup,
+    ...frontActions,
+    ...loginActions,
   }
 )(Front);

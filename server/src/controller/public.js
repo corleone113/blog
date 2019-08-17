@@ -1,17 +1,17 @@
 import Express from 'express';
-import React from 'react';
-import ReactDOMServer from 'react-dom/server';
-import { StaticRouter, Route, Switch, } from 'react-router';
-import Tags from '../models/tags';
-import Article from '../models/article';
 import userService from '../service/user';
 import roleService from '../service/role';
 import resourceService from '../service/resource';
+import tagService from '../service/tag';
+import articleService from '../service/article';
 import config from '../../config';
+import {
+    status,
+} from '../constants';
 // import {
 //     status,
 // } from '../constants';
-import  {
+import {
     responseClient,
     initDB,
     SHA2_SUFFIX,
@@ -28,113 +28,67 @@ const {
 
 // router.use('/user', require('./user'));
 //获取全部标签
-router.get('/getAllTags', function (req, res) {
-    Tags.find(null, 'name').then(data => {
-        responseClient(res, 200, 0, '请求成功', data);
-    }).catch(err => {
-        responseClient(res, 203, 1, err);
-    });
+router.get('/getAllTags', async function (req, res) {
+    try {
+        const tags = await tagService.findAll(null);
+        responseClient(res, 200, 0, '', tags);
+    } catch (err) {
+        responseClient(res, 200, 1, '获取标签失败', err);
+    }
 });
-
-router.get('/hehe/*', (req, res) => {
-    console.log('the query:', req.query);
-    const context = {};
-    context.url = req.url;
-    const list = ReactDOMServer.renderToString(
-        <StaticRouter context={context}
-            location={req.url}>
-            <Switch>
-                <Route path="/hehe/1" render={(props) => {
-                    return (<ul>
-                        <li>one</li>
-                        <li>two</li>
-                        <li>three</li>
-                        <li>This is P tag and context:{JSON.stringify(props)}</li>
-                    </ul>);
-                }} />
-                <Route path="/hehe/2" render={(props) => {
-                    return <p>This is P tag and context:{JSON.stringify(props)}</p>;
-                }} />
-                <Route render={(props) => {
-                    context.code = 404;
-                    return <p>404{JSON.stringify(props.staticContext)}</p>;
-                }} />
-            </Switch>
-
-        </StaticRouter>
-    );
-    console.log('now the context:', context);
-    res.set({
-        'Content-Type': 'text/html',
-    });
-    context.code ? responseClient(res, 404, 1, '>>>>', list) : responseClient(res, 200, 0, '>>>>', list);
-});
-
 
 //获取文章
 router.get('/getArticles', function (req, res) {
-    const tag = req.query.tag || null;
-    const {
-        isPublish,
-    } = req.query;
-    let searchCondition = {
-        isPublish,
+    const query = {
+        ...req.query,
     };
-    if (tag) {
-        searchCondition.tags = tag;
-    }
-    if (isPublish === 'false') {
-        searchCondition = null;
-    }
-    const skip = (req.query.pageNum - 1) < 0 ? 0 : (req.query.pageNum - 1) * 5;
-    const responseData = {
-        total: 0,
-        list: [],
-    };
-    Article.countDocuments(searchCondition)
-        .then(count => {
-            responseData.total = count;
-            Article.find(searchCondition, '_id title isPublish author viewCount commentCount time coverImg content', {
-                skip: skip,
-                limit: 5,
-            })
-                .then(result => {
-                    responseData.list = result;
-                    responseClient(res, 200, 0, 'success', responseData);
-                }).cancel(err => {
-                    throw err;
-                });
-        }).cancel(err => {
-            responseClient(res, 203, 1, err);
-        });
+    query.pageNum = req.query.pageNum || 1;
+    query.pageSize = req.query.pageSize || 5;
+    query.isPublish = req.query.isPublish !== undefined ? !!req.query.isPublish : true;
+    query.tag && (query.tags = query.tag);
+    delete query.tag;
+    articleService.find(query, r => {
+        switch (r.status) {
+            case status.SUCCESS:
+                return responseClient(res, 200, 0, '', r.data);
+            case status.QUERY_ERROR:
+                return responseClient(res, 200, 1, '获取文章列表失败!', null);
+        }
+    }, '_id title isPublish author viewCount commentCount time coverImg content');
 });
 //获取文章详情
-router.get('/getArticleDetail', (req, res) => {
+router.get('/getArticleDetail', async (req, res) => {
     const _id = req.query.id;
-    Article.findOne({
-        _id,
-    }).then(data => {
-        data.viewCount = data.viewCount + 1;
-        Article.updateOne({
+    try {
+        const articleDetail = await articleService.findAll({
             _id,
-        }, {
-                viewCount: data.viewCount,
-            })
-            .then(() => {
-                responseClient(res, 200, 0, 'success', data);
-            }).cancel(err => {
-                throw err;
-            });
-
-    }).cancel(() => {
-        responseClient(res);
-    });
+        });
+        articleService.update({
+            ids: [_id, ],
+            sets: [{
+                viewCount: articleDetail[0].viewCount + 1,
+            }, ],
+        }, r => {
+            switch (r.status) {
+                case status.SUCCESS:
+                    return responseClient(res, 200, 0, '', articleDetail[0]);
+                case status.UPDATE_ERROR:
+                    throw new Error(r.data);
+            }
+        });
+    } catch (err) {
+        console.error(err);
+        responseClient(res, 200, 1, '获取文章详情失败', err);
+    }
 });
 
 export function init() {
     initDB([{
         service: userService,
-        initObj: [{ ...adminUser, password:sha2(adminUser.password+SHA2_SUFFIX), }, ],
+        initObj: [{
+            ...adminUser,
+            password: sha2(adminUser.password + SHA2_SUFFIX),
+        }, ],
         queryKey: 'username',
         successMsg: '初始化管理员账户成功!',
     }, {

@@ -12,11 +12,12 @@ const initialState = {
     total: 0,
 };
 export const actions = {
-    get_article_list: function (tag = '', pageNum = 1) {
+    get_article_list: function (tag = '', pageNum = 1, pageSize=5,) {
         return {
             type: frontActions.GET_ARTICLE_LIST,
             tag,
             pageNum,
+            pageSize,
         };
     },
     get_article_detail: function (id) {

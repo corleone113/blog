@@ -18,10 +18,17 @@ export const actions = {
             par: Date.now(),
         };
     },
-    signup: (data) => {
+    signUpOrIn: (isSignIn, payload) => {
         return {
-            type: loginActions.SIGNUP_REQ,
-            payload: data,
+            type: loginActions.SIGNUPORIN_REQ,
+            isSignIn,
+            payload,
+        };
+    },
+    provide_api(api) {
+        return {
+            type: loginActions.PROVIDE_API,
+            api,
         };
     },
 };
@@ -39,11 +46,15 @@ export function reducer(state = initialState, action) {
                 to: 'goto_signup',
                     par: action.par ? action.par : state.par,
             };
-        case loginActions.SIGNUP_RES:
+        case loginActions.SIGNUPORIN_RES:
             return {
                 ...state,
-                to: 'signup',
-                    data: action.data,
+                payload: action.data,
+            };
+        case loginActions.PROVIDE_API:
+            return {
+                ...state,
+                api: action.api,
             };
         default:
             return state;

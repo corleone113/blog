@@ -2,6 +2,7 @@ import {
   take,
   put,
   call,
+  select,
 } from 'redux-saga/effects';
 import {
   post,
@@ -10,61 +11,28 @@ import {
   loginActions,
   defaultActions,
 } from '../reducers/actionTypes';
-
-function* signup(payload) {
-  yield put({
-    type: defaultActions.FETCH_START,
-  });
-  try {
-    return yield call(post, '/admin/signup', payload);
-  } catch (err) {
-    yield put({
-      type: defaultActions.SET_MESSAGE,
-      msgContent: '网络请求错误',
-      msgType: 0,
-    });
-  } finally {
-    yield put({
-      type: defaultActions.FETCH_END,
-    });
-  }
-}
-export function* signupFlow() {
+export function* signUpOrInFlow(method) {
   while (true) {
     const req = yield take(
-      loginActions.SIGNUP_REQ
+      loginActions.SIGNUPORIN_REQ
     );
-    const res = yield call(signup, req.payload);
+    const url = req.isSignIn ? '/admin/signin' : '/admin/signup';
+    const res = yield call(method, post, url, req.payload);
     console.log('saga signup res:', res);
-    if (!res) {
-      yield put({
-        type: defaultActions.SET_MESSAGE,
-        msgContent: '请求失败',
-        msgType: 0,
-      });
-      continue;
-    }
-    if (res.code === 1) {
+    if (!(res.code === 0 && req.isSignIn)) {
       yield put({
         type: defaultActions.SET_MESSAGE,
         msgContent: res.message,
-        msgType: 0,
+        msgType: res.code === 0 ? 1 : 0,
       });
-      yield put({
-        type: loginActions.GOTO_SIGNUP,
-        par: Date.now(),
-      });
-      continue;
     }
+
     if (res.code === 0) {
       yield put({
-        type: defaultActions.SET_MESSAGE,
-        msgContent: res.message,
-        msgType: 1,
+        type:loginActions.GOTO_SIGNIN,
       });
-      yield put({
-        type: loginActions.GOTO_SIGNIN,
-      });
+      const afterLogin = yield select(state => state.login.api);
+      yield call(afterLogin, res.data);
     }
   }
 }

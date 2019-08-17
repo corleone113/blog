@@ -6,4 +6,5 @@ class RoleService extends Base {
         this.Model = Role;
     }
 }
+
 export default new RoleService();

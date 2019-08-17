@@ -1,10 +1,10 @@
 import express from 'express';
 import login from './login';
-import user from './user';
+import manage from './manage';
 
 const router = express.Router();
 
 router.use('/', login);
-router.use('/user', user);
+router.use('/manage', manage);
 
 export default router;

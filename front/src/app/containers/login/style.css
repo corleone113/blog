@@ -20,3 +20,7 @@
     width: 500px;
     padding: 20px;
 }
+.link {
+    color:#1890ff;
+    cursor:pointer;
+}

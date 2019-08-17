@@ -1,42 +1,33 @@
 import React, { PureComponent, } from 'react';
-import { bindActionCreators, } from 'redux';
 import { connect, } from 'react-redux';
 import { actions as loginActions, } from '../../reducers/loginReducer';
-// import { HashRouter, Link, Route } from 'react-router-dom';
 import Banner from '../../components/banner/Banner';
 import LoginForm from './LoginForm';
 import { loginBannerImages as imgPaths, } from '@/config/config';
-// import NotFound from '../../components/notFound/NotFound';
-const { goto_signin, goto_signup, signup, } = loginActions;
+
+const captchaUrl = 'http://localhost:2333/admin/captcha';
 
 class LoginPage extends PureComponent {
   constructor() {
     super();
-    this.state = {
-      extraH: '0px',
-    };
   }
   componentDidMount() {
     this.getExtraH();
+    this.props.provide_api(this.afterLogin);
   }
   componentDidUpdate() {
     this.getExtraH();
   }
+  afterLogin = (userInfo) => {
+    sessionStorage.setItem('info', JSON.stringify(userInfo));
+    this.props.history.push('/admin/manage');
+  }
+  extraH = '';
   handleSubmit = (event) => {
     event.preventDefault();
-    // console.log(`Yes!!${this.props.to}`)
-    //thisis.loginForm.props.form.getFeildsValue is not a function
-
     const values = this.loginForm.props.form.getFieldsValue();
-    this.props.isLogin ? null : this.props.signup(values);
-    // this.props.dispatch({
-    //             type:this.props.isLogin?"login/signin":'login/signup',
-    //             payload:values
-    //  });
-  }
-  changeTab = (key) => {
-    console.log('call the changetab...');
-    this.props[key]();
+    const isLogin = this.props.to === 'goto_signin';
+    this.props.signUpOrIn(isLogin, values);
   }
   changeLoginStatus = () => {
     const key = this.props.to === 'goto_signin' ? 'goto_signup' : 'goto_signin';
@@ -47,14 +38,16 @@ class LoginPage extends PureComponent {
   }
   getExtraH = () => {
     const frm = document.getElementsByTagName('form')[0];
-    this.setState({ extraH: getComputedStyle(frm).marginTop, });
+    this.extraH = getComputedStyle(frm).marginTop;
   }
   render() {
+    this.captchaUrl = captchaUrl + '?ts=' + Date.now();
     const isLogin = this.props.to === 'goto_signin';
-    const h = isLogin ? '0px' : parseFloat(this.state.extraH) * 2 + 'px';
+    const extraH = isLogin ? '0px' : parseFloat(this.extraH) * 2 + 'px';
     return (
       <>
         <LoginForm
+          captchaUrl={this.captchaUrl}
           capTs={this.props.par}
           changeLoginStatus={this.changeLoginStatus}
           handleSubmit={this.handleSubmit}
@@ -63,7 +56,7 @@ class LoginPage extends PureComponent {
           wrappedComponentRef={instance => this.loginForm = instance}
         />
         <Banner imagePaths={imgPaths}
-          size={{ height: `calc(100vh + ${h})`, }}
+          size={{ height: `calc(100vh + ${extraH})`, minHeight: '940px', }}
         />
       </>
     );
@@ -71,14 +64,7 @@ class LoginPage extends PureComponent {
 }
 function mapStateToProps(state) {
   return {
-    ...state.admin.login,
+    ...state.login,
   };
 }
-function mapDispatchToProps(dispatch) {
-  return {
-    goto_signin: bindActionCreators(goto_signin, dispatch),
-    goto_signup: bindActionCreators(goto_signup, dispatch),
-    signup: bindActionCreators(signup, dispatch),
-  };
-}
-export default connect(mapStateToProps, mapDispatchToProps)(LoginPage);
+export default connect(mapStateToProps, loginActions)(LoginPage);

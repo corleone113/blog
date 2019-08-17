@@ -11,4 +11,5 @@ export default new mongoose.Schema({
     website: String,
     phone: String,
     address: String,
+    role: String,
 });

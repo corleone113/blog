@@ -11,36 +11,15 @@ import {
   defaultActions,
 } from '../reducers/actionTypes';
 
-
-export function* getArticleList(tag, pageNum) {
-  yield put({
-    type: defaultActions.FETCH_START,
-  });
-  try {
-    return yield call(get, `/getArticles?pageNum=${pageNum}&isPublish=true&tag=${tag}`);
-  } catch (err) {
-    yield put({
-      type: defaultActions.SET_MESSAGE,
-      msgContent: '网络请求错误',
-      msgType: 0,
-    });
-  } finally {
-    yield put({
-      type: defaultActions.FETCH_END,
-    });
-  }
-}
-
-export function* getArticlesListFlow() {
+export function* getArticlesListFlow(method) {
   while (true) {
     const req = yield take(frontActions.GET_ARTICLE_LIST);
-    const res = yield call(getArticleList, req.tag, req.pageNum);
-    console.log('front saga articles data:', res.data);
+    const res = yield call(method, get, `/getArticles?pageNum=${req.pageNum}&isPublish=true&tag=${req.tag}`);
     if (res) {
       if (res.code === 0) {
         res.data.pageNum = req.pageNum;
         yield put({
-          type: frontActions.RESPONSE_ARTICLE_LIST,
+          type: frontActions.GET_ARTICLE_LIST_RES,
           data: res.data,
         });
       } else {
@@ -54,33 +33,14 @@ export function* getArticlesListFlow() {
   }
 }
 
-export function* getArticleDetail(id) {
-  yield put({
-    type: defaultActions.FETCH_START,
-  });
-  try {
-    return yield call(get, `/getArticleDetail?id=${id}`);
-  } catch (err) {
-    yield put({
-      type: defaultActions.SET_MESSAGE,
-      msgContent: '网络请求错误',
-      msgType: 0,
-    });
-  } finally {
-    yield put({
-      type: defaultActions.FETCH_END,
-    });
-  }
-}
-
-export function* getArticleDetailFlow() {
+export function* getArticleDetailFlow(method) {
   while (true) {
     const req = yield take(frontActions.GET_ARTICLE_DETAIL);
-    const res = yield call(getArticleDetail, req.id);
+    const res = yield call(method, get, `/getArticleDetail?id=${req.id}`);
     if (res) {
       if (res.code === 0) {
         yield put({
-          type: frontActions.RESPONSE_ARTICLE_DETAIL,
+          type: frontActions.GET_ARTICLE_DETAIL_RES,
           data: res.data,
         });
       } else {
@@ -90,6 +50,31 @@ export function* getArticleDetailFlow() {
           msgType: 0,
         });
       }
+    }
+  }
+}
+
+
+export function* getAllTagsFlow(method) {
+  while (true) {
+    yield take(frontActions.GET_ALL_TAGS);
+    const res = yield call(method, get, '/getAllTags');
+    // console.log('the res:', res);
+    if (res.code === 0) {
+      const tempArr = [];
+      for (let i = 0; i < res.data.length; i++) {
+        tempArr.push(res.data[i].name);
+      }
+      yield put({
+        type: frontActions.GET_ALL_TAGS_RES,
+        data: tempArr,
+      });
+    } else {
+      yield put({
+        type: defaultActions.SET_MESSAGE,
+        msgContent: res.message,
+        msgType: 1,
+      });
     }
   }
 }

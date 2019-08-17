@@ -12,7 +12,7 @@ export default class Menus extends Component {
   }
   componentDidMount() {
     this.setState({
-      current: this.props.history.location.pathname.replace('/', '') || '首页',
+      current: this.props.history.location.pathname.replace('/public/', '') || '首页',
     });
   }
     handleClick = (e) => {
@@ -21,7 +21,7 @@ export default class Menus extends Component {
       } else {
         this.props.getArticleList(e.key);
       }
-      const toPath = e.key === '首页' ? '/' : '/' + e.key;
+      const toPath = e.key === '首页' ? '/public' : '/public/' + e.key;
       this.setState({
         current: e.key,
       });

@@ -1,0 +1,27 @@
+.logo {
+    width: 120px;
+    float: left;
+    margin-left: -0.7vw;
+}
+
+.welcome {
+    float: right;
+    color: #FFF;
+    margin: 0 10px;
+}
+
+.layout {
+    min-height: 86vh;
+}
+
+
+.toolbar {
+    float: right;
+}
+
+.toolbar>span{
+    color: #eee;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+}

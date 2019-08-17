@@ -2,44 +2,30 @@ import {
     reducer as front,
 } from './frontReducer';
 import {
+    reducer as login,
+} from './loginReducer';
+import {
+    reducer as manage,
+} from './manageReducer';
+import {
     defaultActions,
 } from './actionTypes';
 import {
     combineReducers,
 } from 'redux';
-import admin from './admin';
 const initialState = {
-    isFetching: true,
+    isFetching: false,
     msg: {
-        type: 1, //0失败，1成功
+        type: 1, //0失败，1成功，2会话过期
         content: '',
     },
-    userInfo: {},
 };
 export const actions = {
-    get_login: function (username, password) {
-        return {
-            type: defaultActions.USER_LOGIN,
-            username,
-            password,
-        };
-    },
-    get_register: function (data) {
-        return {
-            type: defaultActions.USER_REGISTER,
-            data,
-        };
-    },
     clear_msg: function () {
         return {
             type: defaultActions.SET_MESSAGE,
             msgType: 1,
             msgContent: '',
-        };
-    },
-    user_auth: function () {
-        return {
-            type: defaultActions.USER_AUTH,
         };
     },
 };
@@ -62,10 +48,6 @@ export function reducer(state = initialState, action) {
                         content: action.msgContent,
                     },
             };
-        case defaultActions.RESPONSE_USER_INFO:
-            return {
-                ...state, userInfo: action.data,
-            };
         default:
             return state;
     }
@@ -73,5 +55,6 @@ export function reducer(state = initialState, action) {
 export default combineReducers({
     front,
     globalState: reducer,
-    admin,
+    login,
+    manage,
 });

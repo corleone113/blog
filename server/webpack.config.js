@@ -1,7 +1,7 @@
-const path = require('path')
+const path = require('path');
 const {
-    CleanWebpackPlugin
-} = require('clean-webpack-plugin')
+    CleanWebpackPlugin,
+} = require('clean-webpack-plugin');
 module.exports = {
     mode: 'development',
     entry: [
@@ -13,10 +13,10 @@ module.exports = {
     // },
     output: {
         path: path.resolve(__dirname, 'dist'),
-        filename: '[name].bundle.js'
+        filename: '[name].bundle.js',
     },
     node:{
-        process:false
+        process:false,
     },
     // optimization: {
     //     usedExports: true,
@@ -49,5 +49,5 @@ module.exports = {
     // },
     plugins: [
         new CleanWebpackPlugin(),
-    ]
-}
+    ],
+};

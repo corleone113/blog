@@ -1,5 +1,4 @@
 import React, { PureComponent, } from 'react';
-import { bindActionCreators, } from 'redux';
 import remark from 'remark';
 import { connect, } from 'react-redux';
 import { actions, } from '../../reducers/frontReducer';
@@ -47,7 +46,7 @@ class Detail extends PureComponent {
 }
 
 function mapStateToProps(state) {
-  const { content, title, author, viewCount, commentCount, time, } = state.front.articleDetail;
+  const { content, title, author, viewCount, commentCount, time, } = state.front.articles.articleDetail;
   return {
     articleContent: content,
     title,
@@ -58,13 +57,8 @@ function mapStateToProps(state) {
   };
 }
 
-function mapDispatchToProps(dispatch) {
-  return {
-    get_article_detail: bindActionCreators(get_article_detail, dispatch),
-  };
-}
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  { get_article_detail, }
 )(Detail);

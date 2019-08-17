@@ -1,16 +1,15 @@
 import { hot, } from 'react-hot-loader/root';
 import React, { PureComponent, } from 'react';
-import { BrowserRouter as Router, Route, Switch, } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch, Redirect, } from 'react-router-dom';
 import { notification, Layout, } from 'antd';
 import 'normalize.css/normalize.css';
 import { connect, } from 'react-redux';
-import { bindActionCreators, } from 'redux';
 import { actions, } from '../reducers';
 import NotFound from '../components/notFound/NotFound';
 import Front from './front/Front';
 import Login from './login/Login';
+import Manage from './manage/Manage';
 import style from './index.css';
-// import Loading from '../components/loading/Loading';
 const { clear_msg, } = actions;
 const { Footer, } = Layout;
 class IndexPage extends PureComponent {
@@ -24,28 +23,24 @@ class IndexPage extends PureComponent {
         this.openNotification('error', this.props.notification.content);
     }
   }
+  //暂时取消调用clear_msg,防止多余的渲染
   openNotification = (type, message) => {
-    const that = this;
     notification[type]({
       message: message,
-      onClose: () => {
-        that.props.clear_msg();
-      },
     });
-    this.props.clear_msg();
   }
   render() {
     return (
       <>
         <Router>
           <Switch>
-            <Route component={NotFound}
-              path="/404"
-            />
+            <Route component={Manage} path="/admin/manage" />
             <Route component={Login}
               path="/login"
             />
-            <Route component={Front} />
+            <Route component={Front} path="/public" />
+            <Redirect exact from="/" to="/public" />
+            <Route component={NotFound} />
           </Switch>
         </Router>
         <Footer className={style.footer}>
@@ -63,14 +58,7 @@ function mapStateToProps(state) {
   };
 }
 
-function mapDispatchToProps(dispatch) {
-  return {
-    clear_msg: bindActionCreators(clear_msg, dispatch),
-  };
-}
-
-
 export default hot(connect(
   mapStateToProps,
-  mapDispatchToProps
+  { clear_msg, }
 )(IndexPage));

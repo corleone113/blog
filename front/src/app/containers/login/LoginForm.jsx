@@ -5,13 +5,21 @@ import { addressOptions, } from './constans';
 import style from './style.css';
 
 const FormItem = Form.Item;
-const captchaUrl = 'http://localhost:2333/admin/captcha';
 
 @Form.create()
 class Login extends Component {
   state = { autoCompleteOptions: [], rePasswordDirty: false, }
-
   // 确定密码时离开输入框时判断是否已输入
+  componentDidUpdate() {
+    if (!this.props.isLogin && !this.reseted) {
+      this.props.form.resetFields();
+      this.reseted = true;
+    }
+    if (this.props.isLogin) {
+      this.reseted = false;
+    }
+  }
+  reseted = false;
   handleRepasswordBlur = (event) => {
     this.setState({ rePasswordDirty: this.state.rePasswordDirty || !!event.target.value, });
   }
@@ -37,7 +45,7 @@ class Login extends Component {
     }
   }
   refreshCaptcha = (event) => {
-    event.target.src = captchaUrl + '?ts=' + Date.now();
+    event.target.src = this.props.captchaUrl + '&ts=' + Date.now();
   }
   render() {
     const { handleSubmit, form: { getFieldDecorator, }, changeLoginStatus, isLogin, returnHome, } = this.props;
@@ -69,22 +77,20 @@ class Login extends Component {
     const websiteOptions = this.state.autoCompleteOptions.map(option => (
       <AutoComplete.Option key={option}>{option}</AutoComplete.Option>
     ));
-    const capSrc = captchaUrl + '?ts=' + this.props.capTs;
     return (
       <div className={style.form_container}>
         <Form onSubmit={handleSubmit}
-          style={{ width: isLogin ? '380px' : '500px', marginTop: isLogin ? '10vh' : '3vh', }}
+          style={{ width: isLogin ? '400px' : '500px', marginTop: isLogin ? '10vh' : '3vh', }}
           {...formItemLayout}
         >
-          <h3>欢迎注册</h3>
+          <h3>欢迎{isLogin ? '登录' : '注册'}</h3>
           <FormItem label="用户名" >
             {
               getFieldDecorator('username', {
                 rules: [{ required: true, message: '用户名必须输入!', }, ],
-              })(<Input autoComplete="username"
-                prefix={<Icon style={{ color: 'rgba(0,0,0,.25)', }}
-                  type="user"
-                />}
+              })(<Input autoComplete="username" prefix={<Icon style={{ color: 'rgba(0,0,0,.25)', }}
+                type="user"
+              />}
               />)
             }
           </FormItem>
@@ -95,8 +101,7 @@ class Login extends Component {
                 { validator: this.validateRepassword, }, ],
               })(<Input.Password autoComplete="current-password"
                 prefix={<Icon style={{ color: 'rgba(0,0,0,.25)', }}
-                  type="lock"
-                />}
+                  type="lock" />}
               />)
             }
           </FormItem>
@@ -181,9 +186,9 @@ class Login extends Component {
             </FormItem>
           }
           {
-            !isLogin && <FormItem label="验证码">
+            <FormItem label="验证码">
               <Row>
-                <Col span={16}>
+                <Col span={isLogin ? 12 : 16}>
                   {
                     getFieldDecorator('captcha', {
                       rules: [{ required: true, message: '验证码必须输入!', }, ],
@@ -192,10 +197,10 @@ class Login extends Component {
                     )
                   }
                 </Col>
-                <Col span={8}>
+                <Col span={isLogin ? 6 : 8}>
                   <img alt="captcha"
                     onClick={this.refreshCaptcha}
-                    src={capSrc}
+                    src={this.props.captchaUrl}
                   />
                 </Col>
               </Row>
@@ -219,11 +224,11 @@ class Login extends Component {
               style={{ width: '100%', }}
               type="primary"
             >{isLogin ? '登录' : '注册'}</Button>
-            {isLogin ? '没有账号' : '已有账号'}<a href="#"
+            {isLogin ? '没有账号' : '已有账号'}<span className={style.link}
               onClick={changeLoginStatus}
-            >{isLogin ? '立刻注册' : '立刻登录'}</a><br /><a href=""
+            >{isLogin ? '立刻注册' : '立刻登录'}</span><br /><span className={style.link}
               onClick={returnHome}
-            >返回首页</a>
+            >返回首页</span>
           </FormItem>
         </Form>
       </div>);

@@ -7,8 +7,7 @@ export default class Banner extends PureComponent {
     // }
     renderImage = ( paths, size ) => {
       return paths.map( ( item, index ) => ( <div className={style.carouselImgContainer}
-        key={index}
-                                             >
+        key={index} >
         <img src={item}
           style={{...size, }}
         />

@@ -1,6 +1,9 @@
 import {
     frontActions,
 } from './actionTypes';
+import {
+    combineReducers,
+} from 'redux';
 const initialState = {
     category: [],
     articleList: [],
@@ -22,14 +25,20 @@ export const actions = {
             id,
         };
     },
+    get_all_tags: function () {
+        return {
+            type: frontActions.GET_ALL_TAGS,
+        };
+    },
 };
-export function reducer(state = initialState, action) {
+
+function articleReducer(state = initialState, action) {
     switch (action.type) {
-        case frontActions.RESPONSE_ARTICLE_LIST:
+        case frontActions.GET_ARTICLE_LIST_RES:
             return {
                 ...state, articleList: [...action.data.list, ], pageNum: action.data.pageNum, total: action.data.total,
             };
-        case frontActions.RESPONSE_ARTICLE_DETAIL:
+        case frontActions.GET_ARTICLE_DETAIL_RES:
             return {
                 ...state, articleDetail: action.data,
             };
@@ -37,3 +46,17 @@ export function reducer(state = initialState, action) {
             return state;
     }
 }
+
+function tagReducer(state = [], action) {
+    switch (action.type) {
+        case frontActions.GET_ALL_TAGS_RES:
+            return ['首页', ...action.data, ];
+        default:
+            return state;
+    }
+}
+
+export const reducer=combineReducers({
+    articles:articleReducer,
+    tags:tagReducer,
+});

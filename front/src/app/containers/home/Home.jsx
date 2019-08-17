@@ -1,8 +1,6 @@
 import React, { PureComponent, } from 'react';
-import { Redirect, } from 'react-router-dom';
 import { Pagination, } from 'antd';
 import { connect, } from 'react-redux';
-import { bindActionCreators, } from 'redux';
 import { actions as frontActions, } from '../../reducers/frontReducer';
 import ArticleList from '../../components/article/Articles';
 import PropTypes from 'prop-types';
@@ -29,46 +27,44 @@ class Home extends PureComponent {
   }
   render() {
     const { tags, } = this.props;
-    localStorage.setItem('userInfo', JSON.stringify(this.props.userInfo));
+    const m = this.props.match;
+    const isTag = tags.includes(m.params.tag) || m.url === '/public';
     return (
-      tags.length > 1 && this.props.match.params.tag && (tags.indexOf(this.props.match.params.tag) === -1 || this.props.location.pathname.lastIndexOf('/') > 0) ? <Redirect to="/404" /> :
-        <div className={style.container}>
-          <ArticleList
-            data={this.props.articleList}
-            getArticleDetail={this.props.get_article_detail}
-            history={this.props.history}
-          />
-          <div className={style.paginationContainer}>
-            <Pagination
-              current={this.props.pageNum}
-              defaultPageSize={5}
-              onChange={(pageNum) => {
-                this.props.get_article_list(this.props.match.params.tag || '', pageNum);
-              }}
-              total={this.props.total}
+      <>
+        {
+          isTag &&
+          (< div className={style.container} >
+            <ArticleList
+              data={this.props.articleList}
+              getArticleDetail={this.props.get_article_detail}
+              history={this.props.history}
             />
-          </div>
-        </div>
+            <div className={style.paginationContainer}>
+              <Pagination
+                current={this.props.pageNum}
+                defaultPageSize={5}
+                onChange={(pageNum) => {
+                  this.props.get_article_list(this.props.match.params.tag || '', pageNum);
+                }}
+                total={this.props.total}
+              />
+            </div>
+          </div >)}
+      </>
     );
   }
 }
 function mapStateToProps(state) {
+  const props = state.front;
   return {
-    tags: state.admin.tags,
-    pageNum: state.front.pageNum,
-    total: state.front.total,
-    articleList: state.front.articleList,
-  };
-}
-
-function mapDispatchToProps(dispatch) {
-  return {
-    get_article_list: bindActionCreators(get_article_list, dispatch),
-    get_article_detail: bindActionCreators(get_article_detail, dispatch),
+    tags: props.tags,
+    pageNum: props.articles.pageNum,
+    total: props.articles.total,
+    articleList: props.articles.articleList,
   };
 }
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  { get_article_detail, get_article_list, }
 )(Home);

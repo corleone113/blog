@@ -23,7 +23,7 @@ const config = {
     responseType: 'json',
 };
 
-axios.interceptors.response.use(function(res){
+axios.interceptors.response.use(function (res) {
     //响应拦截器
     return res.data;
 });
@@ -35,4 +35,20 @@ export function get(url) {
 
 export function post(url, data) {
     return axios.post(url, data, config);
+}
+
+export function request(otherConfig) {
+    return axios({
+        ...config,
+        ...otherConfig,
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        transformRequest: [
+            function (data) {
+                console.log('the request data:', data);
+                return JSON.stringify(data);
+            },
+        ],
+    });
 }

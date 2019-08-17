@@ -1,11 +1,27 @@
 import {
     status,
 } from '../constants';
+import {
+    getPlainObj,
+} from '../util';
 export default class Base {
     // constructor(model, query) {
     //     this.model = model;
     //     this.query = query;
     // }
+    findAll(query) {
+        return new Promise((resolve, reject) => {
+            this.Model.find(query).exec((err, data) => {
+                if (err) reject(err);
+                const keys = Object.keys(this.Model.schema.obj);
+                const plain = [];
+                for (const d of data) {
+                    plain.push(getPlainObj(d, keys));
+                }
+                resolve(plain);
+            });
+        });
+    }
     find(query, cb) {
         const {
             order,
@@ -36,7 +52,7 @@ export default class Base {
                 cb({
                     status: err ? status.QUERY_ERROR : status.SUCCESS,
                     data: err ? err : {
-                        ...data,
+                        list: Array.from(data),
                         total,
                     },
                 });
@@ -52,8 +68,9 @@ export default class Base {
                     if (err) {
                         throw new Error(err);
                     }
+                    const keys = Object.keys(this.Model.schema.obj);
                     cb({
-                        data,
+                        data: getPlainObj(data, keys),
                         status: status.SUCCESS,
                     });
                 });
@@ -116,7 +133,7 @@ export default class Base {
                         result[k] += parseInt(data[k]);
                     }
                 }
-                if (i == ids.length - 1) {
+                if (i === ids.length - 1) {
                     return cb({
                         status: err ? status.UPDATE_ERROR : status.SUCCESS,
                         data: result,

@@ -1,36 +1,26 @@
 module.exports = {
     //数据库地址配置
-    dbHost: '192.168.1.104',
+    dbHost: '192.168.31.155',
     dbPort: '34105',
-    apiHost: '192.168.1.107',
+    apiHost: '192.168.31.92',
     apiPort: '2333',
     resources: [{
             name: '权限管理',
             parent: '',
-            parent_id:'',
             route: '/admin/manage',
             icon: 'desktop',
         },
         {
             name: '用户管理',
             parent: '权限管理',
-            parent_id:'',
             route: '/admin/manage/user',
             icon: 'user',
         },
         {
             name: '角色管理',
             parent: '权限管理',
-            parent_id:'',
             route: '/admin/manage/role',
             icon: 'team',
-        },
-        {
-            name: '资源管理',
-            parent: '权限管理',
-            parent_id:'',
-            route: '/admin/manage/resource',
-            icon: 'idcard',
         },
     ],
     adminUser: {
@@ -41,10 +31,18 @@ module.exports = {
         website: 'github.com',
         phone: '18928499214',
         address: 'chengdu',
+        role:'管理员',
     },
     initRoles: [{
-        name: '系统管理员',
+        name: '管理员',
+        resources: [
+            '权限管理',
+            '用户管理',
+            '角色管理',
+        ],
     }, {
-        name: '普通管理员',
+        name: '用户',
     }, ],
+    forSecret:'corleone',
+    jwtSecret:'corleone2019-8-17 16:12:25',
 };

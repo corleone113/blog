@@ -1,4 +1,5 @@
 import React, { PureComponent, } from 'react';
+import { Icon, } from 'antd';
 import style from './style.css';
 
 export const ArticleListCell = (props) => (
@@ -25,26 +26,24 @@ export const ArticleListCell = (props) => (
       <div>
         <p>
           <span>
-            <img alt="发表日期"
-              src={require('./calendar.png')}
-            />
-            {props.data.time}
+            <Icon type="calendar" />
+            &nbsp;{props.data.time}
           </span>
           <span>
-            <img alt="阅读数"
-              src={require('./views.png')}
-            />
-            {props.data.viewCount}
+            <Icon type="eye" />
+            &nbsp;{props.data.viewCount}
           </span>
           <span>
-            <img alt="评论数"
-              src={require('./comments.png')}
-            />
-            {props.data.commentCount}
+            <Icon type="message" />
+            &nbsp;{props.data.commentCount}
+          </span>
+          <span>
+            <Icon type="user" />
+            &nbsp;{props.data.author}
           </span>
         </p>
         <span className={style.lastSpan}>
-          阅读全文 <span>》</span>
+          阅读全文 <span>></span>
         </span>
       </div>
     </div>
@@ -58,7 +57,6 @@ export default class extends PureComponent {
         {
           this.props.data.map((item, index) => (
             <ArticleListCell data={item}
-              getArticleDetail={this.props.getArticleDetail}
               history={this.props.history}
               key={index}
             />

@@ -1,6 +1,8 @@
 const merge = require('webpack-merge');
 const baseConfig = require('./webpack.base');
 const webpack = require('webpack');
+const AddHtmlAssets = require('add-asset-html-webpack-plugin');
+
 const config = merge(baseConfig, {
     mode: 'none',
     devtool: '#inline-source-map',
@@ -10,6 +12,7 @@ const config = merge(baseConfig, {
         }),
     ],
 });
-config.plugins = config.plugins.filter(item => !(item instanceof webpack.ProgressPlugin || item instanceof webpack.DllReferencePlugin));
+
+config.plugins = config.plugins.filter(item => !(item instanceof webpack.ProgressPlugin || item instanceof webpack.DllReferencePlugin || item instanceof AddHtmlAssets));
 // config.plugins = config.plugins.filter(item => !(item instanceof webpack.ProgressPlugin ));
 module.exports = config;

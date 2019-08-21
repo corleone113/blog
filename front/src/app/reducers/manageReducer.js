@@ -21,13 +21,15 @@ const initState = {
     targetKeys: [],
     targetRole: '',
     roles: [],
+    tags: [],
 };
 
 export const actions = {
-    manage_get_all(entity) {
+    manage_get_all(entity, query) {
         return {
             type: manageActions.MANAGE_GET_ALL_REQ,
             entity,
+            query,
         };
     },
     manage_get(
@@ -38,48 +40,48 @@ export const actions = {
             type: manageActions.MANAGE_GET_REQ,
             entity,
             payload: {
+                ...payload,
                 pageNum: payload.pageNum || 1,
                 pageSize: payload.pageSize || 5,
-                where: payload.where || {},
             },
         };
     },
     manage_create(
         entity,
         payload,
-        search,
+        query,
     ) {
         return {
             type: manageActions.MANAGE_CREATE_REQ,
             entity,
             payload,
-            search,
+            query,
         };
     },
     manage_set(
         entity,
         payload,
-        search,
+        query,
     ) {
         return {
             type: manageActions.MANAGE_SET_REQ,
             entity,
             payload,
-            search,
+            query,
         };
     },
     manage_delete(
         entity,
         payload,
         id,
-        search,
+        query,
     ) {
         return {
             type: manageActions.MANAGE_DELETE_REQ,
             id,
             payload,
             entity,
-            search,
+            query,
         };
     },
     manage_change(payload) {
@@ -95,9 +97,22 @@ export const actions = {
             msgType: 0,
         };
     },
-    manage_reset() {
+    manage_relative_delete(entity,
+        relative,
+        beforeQuery,
+        getSets,
+        id,
+        payload,
+        query, ) {
         return {
-            type: 'RESET',
+            type: manageActions.MANAGE_RELATIVE_DELETE,
+            entity,
+            relative,
+            beforeQuery,
+            getSets,
+            id,
+            payload,
+            query,
         };
     },
     manage_provide(method) {

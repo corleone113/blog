@@ -7,7 +7,7 @@ module.exports = {
     resources: [{
             name: '权限管理',
             parent: '',
-            route: '/admin/manage',
+            route: '/admin/manage/auth',
             icon: 'desktop',
         },
         {
@@ -22,6 +22,24 @@ module.exports = {
             route: '/admin/manage/role',
             icon: 'team',
         },
+        {
+            name: '博客管理',
+            parent: '',
+            route: '/admin/manage/blog',
+            icon: 'form',
+        },
+        {
+            name: '标签管理',
+            parent: '博客管理',
+            route: '/admin/manage/tag',
+            icon: 'tags',
+        },
+        {
+            name: '文章管理',
+            parent: '博客管理',
+            route: '/admin/manage/article',
+            icon: 'edit',
+        },
     ],
     adminUser: {
         username: 'admin',
@@ -31,18 +49,26 @@ module.exports = {
         website: 'github.com',
         phone: '18928499214',
         address: 'chengdu',
-        role:'管理员',
+        role:'系统管理员',
     },
     initRoles: [{
-        name: '管理员',
+        name: '系统管理员',
         resources: [
             '权限管理',
             '用户管理',
             '角色管理',
+            '博客管理',
+            '标签管理',
+            '文章管理',
         ],
     }, {
-        name: '用户',
+        name: '博客管理员',
+        resources:[
+            '博客管理',
+            '标签管理',
+            '文章管理',
+        ],
     }, ],
     forSecret:'corleone',
-    jwtSecret:'corleone2019-8-17 16:12:25',
+    jwtSecret:'corleone2019-8-21 22:26:57',
 };

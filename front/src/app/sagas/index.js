@@ -18,6 +18,7 @@ import {
   manageSetFlow,
   manageDeleteFlow,
   manageLogout,
+  manageRelativeDeleteFlow,
 } from './manageSaga';
 import {
   defaultActions,
@@ -28,7 +29,9 @@ function* launchRequest(method, ...params) {
     type: defaultActions.FETCH_START,
   });
   try {
-    return yield call(method, ...params);
+    const res = yield call(method, ...params);
+    if (!res) throw new Error('无响应!请查看后台控制台信息');
+    else return res;
   } catch (err) {
     yield put({
       type: defaultActions.SET_MESSAGE,
@@ -54,5 +57,6 @@ export default function* rootSaga() {
     manageSetFlow,
     manageDeleteFlow,
     manageLogout,
+    manageRelativeDeleteFlow,
   ].map(method => method(launchRequest)));
 }

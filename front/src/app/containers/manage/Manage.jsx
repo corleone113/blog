@@ -4,12 +4,9 @@ import { Switch, } from 'react-router-dom';
 import { Layout, } from 'antd';
 import ManageHeader from './ManageHeader';
 import NavList from './NavList';
-import { actions, } from '../../reducers/manageReducer';
-// import Loading from '../../components/loading/Loading';
+import { actions, } from '@/reducers/manageReducer';
 import routeConfig from './routeConfig';
 import RouteGuard from './RouteGuard';
-// import Role from '../role/Role';
-// import User from '../user/User';
 import style from './style.css';
 
 const { Sider, Content, } = Layout;
@@ -36,7 +33,6 @@ class Manage extends Component {
     render() {
         const userInfo = JSON.parse(sessionStorage.getItem('info'));
         return (<>
-            {/* {this.props.isFetching && <Loading />} */}
             <Layout>
                 <ManageHeader {...{ ...this.props, userInfo, }} />
                 <Layout className={style.layout}>
@@ -45,8 +41,6 @@ class Manage extends Component {
                     </Sider>
                     <Content>
                         <Switch>
-                            {/* <Route path="/admin/manage/user" component={User} exact />
-                            <Route path="/admin/manage/role" component={Role} exact /> */}
                             <RouteGuard routes={routeConfig} location={this.props.location} userInfo={userInfo} manage_error={this.manage_error} logout={this.logout} />
                         </Switch>
                     </Content>

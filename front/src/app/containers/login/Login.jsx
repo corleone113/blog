@@ -1,7 +1,7 @@
 import React, { PureComponent, } from 'react';
 import { connect, } from 'react-redux';
-import { actions as loginActions, } from '../../reducers/loginReducer';
-import Banner from '../../components/banner/Banner';
+import { actions as loginActions, } from '@/reducers/loginReducer';
+import Banner from '@/components/banner/Banner';
 import LoginForm from './LoginForm';
 import { loginBannerImages as imgPaths, } from '@/config/config';
 
@@ -20,7 +20,7 @@ class LoginPage extends PureComponent {
   }
   afterLogin = (userInfo) => {
     sessionStorage.setItem('info', JSON.stringify(userInfo));
-    this.props.history.push('/admin/manage');
+    this.props.history.push('/');
   }
   extraH = '';
   handleSubmit = (event) => {

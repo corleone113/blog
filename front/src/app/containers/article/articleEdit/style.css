@@ -1,0 +1,45 @@
+.textArea {
+    border: solid thin #ddd;
+    margin: 10px 0;
+    height: 400px;
+    width: 100%;
+}
+
+.subTitle {
+    color: #373737;
+    font-size: 14px;
+}
+
+.container {
+    margin: 1.5vw;
+    min-width: 900px;
+}
+
+.titleInput {
+    width: 60%;
+    display: block;
+    margin: 10px 0;
+}
+
+.selectStyle {
+    width: 70%;
+    display: block;
+}
+
+.bottomContainer {
+    width: 70%;
+    display: flex;
+    margin-top: 30px;
+}
+
+
+.buttonStyle {
+    margin-right: 30px;
+    width: 90px;
+    height: 30px;
+}
+
+.modalContainer {
+    height: 500px;
+    overflow: auto;
+}

@@ -1,8 +1,8 @@
 import React, { PureComponent, } from 'react';
 import { Pagination, } from 'antd';
 import { connect, } from 'react-redux';
-import { actions as frontActions, } from '../../reducers/frontReducer';
-import ArticleList from '../../components/article/Articles';
+import { actions as frontActions, } from '@/reducers/frontReducer';
+import ArticleList from '@/components/article/Articles';
 import PropTypes from 'prop-types';
 import style from './style.css';
 

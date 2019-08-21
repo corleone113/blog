@@ -7,7 +7,7 @@ import style from './style.css';
 const FormItem = Form.Item;
 
 @Form.create()
-class Login extends Component {
+class LoginForm extends Component {
   state = { autoCompleteOptions: [], rePasswordDirty: false, }
   // 确定密码时离开输入框时判断是否已输入
   componentDidUpdate() {
@@ -234,5 +234,8 @@ class Login extends Component {
       </div>);
   }
 }
-
-export default hot(Login);
+let DefaultLoginForm = LoginForm;
+if (process.env.NODE_ENV === 'development') {
+  DefaultLoginForm = hot(LoginForm);
+}
+export default DefaultLoginForm;

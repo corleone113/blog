@@ -21,7 +21,7 @@ const initialState = {
     },
 };
 export const actions = {
-    clear_msg: function () {
+    clear_msg() {
         return {
             type: defaultActions.SET_MESSAGE,
             msgType: 1,

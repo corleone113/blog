@@ -5,6 +5,9 @@ import {
 import userService from '../../service/user';
 import roleService from '../../service/role';
 import resourceService from '../../service/resource';
+import tagService from '../../service/tag';
+import articleService from '../../service/article';
+
 import {
     status,
 } from '../../constants';
@@ -13,6 +16,8 @@ const services = {
     user: userService,
     role: roleService,
     resource: resourceService,
+    tag: tagService,
+    article: articleService,
 };
 const router = express.Router();
 router.use('/:type/:id?', (req, res, next) => {
@@ -26,13 +31,19 @@ router.get('/:type', async (req, res) => {
         query,
         params,
     } = req;
+    if (query.username) {
+        query.username = JSON.parse(query.username);
+    }
+    if (query.name) {
+        query.name = JSON.parse(decodeURI(query.name));
+    }
     if (query.pageSize === 'n') {
         delete query.pageNum;
         delete query.pageSize;
         delete query.order;
         let list = await services[params.type].findAll(query);
         if (list) {
-            if (params.type === 'resource'){
+            if (params.type === 'resource') {
                 list = resourceService.getTrees(list);
             }
             responseClient(res, 200, 0, '', {

@@ -1,6 +1,6 @@
 import React, { Component, } from 'react';
 import style from './style.css';
-import anim from '../../../static/animate.css';
+import anim from 'static/animate.css';
 import _404 from './404.png';
 
 export default class extends Component {

@@ -1,18 +1,21 @@
 import React, { Component, } from 'react';
+import loadable from '@loadable/component';
 import PropTypes from 'prop-types';
 import { connect, } from 'react-redux';
 import { Switch, Route, } from 'react-router-dom';
-import Detail from '../../components/detail/Detail';
-import Banner from '../../components/banner/Banner';
-import Menus from '../../components/menu/Menus';
-import Home from '../home/Home';
-import Toolbar from '../../components/toolbar/Toolbar';
-import Loading from '../../components/loading/Loading';
-import { actions as frontActions, } from '../../reducers/frontReducer';
-import { actions as loginActions, } from '../../reducers/loginReducer';
+import Banner from '@/components/banner/Banner';
+import Menus from '@/components/menu/Menus';
+import Toolbar from '@/components/toolbar/Toolbar';
+import Loading from '@/components/loading/Loading';
+import { actions as frontActions, } from '@/reducers/frontReducer';
+import { actions as loginActions, } from '@/reducers/loginReducer';
+import { actions as manageActions, } from '@/reducers/manageReducer';
 import style from './style.css';
-import { homeBannerImages as imgPaths, } from '../../config/config';
-// import {homeBannerImages as imgPaths} from '../../../../config/config'
+import { homeBannerImages as imgPaths, } from '@/config/config';
+// import {homeBannerImages as imgPaths} from '@/@/config/config'
+const {manage_logout, manage_provide, }=manageActions;
+const Home = loadable(()=>import('../home/Home'));
+const Detail = loadable(()=>import('@/components/detail/Detail'));
 
 class Front extends Component {
   static defaultProps = {
@@ -21,9 +24,10 @@ class Front extends Component {
   static propTypes = {
     categories: PropTypes.array.isRequired,
   }
-
+  state={userInfo: JSON.parse(sessionStorage.getItem('info')), };
   componentDidMount() {
     this.props.get_all_tags();
+    this.props.manage_provide(this.logout);
   }
   gotoLoginPage = (f) => {
     return () => {
@@ -34,18 +38,27 @@ class Front extends Component {
   gotoManagePage = () => {
     this.props.history.push('/admin/manage');
   }
+  logout=()=>{
+    sessionStorage.clear();
+    this.setState({userInfo:null, });
+  }
   render() {
-    const toolbarPayload = {
+    const payloadBeforeSignIn = {
       items: [{ title: '登录', todo: this.gotoLoginPage(this.props.goto_signin), },
       { title: '注册', todo: this.gotoLoginPage(this.props.goto_signup), }, ],
       title: '登录/注册',
     };
+    const payloadAfterSignIn = {
+      items: [{ title: '管理', todo: this.gotoManagePage, },
+      { title: '退出', todo: this.props.manage_logout, }, ],
+      title: `欢迎, ${this.state.userInfo && (this.state.userInfo.username)}`,
+  };
+  const toolBarPayload= this.state.userInfo?payloadAfterSignIn:payloadBeforeSignIn;
     return (
       <>
         <div>
           <div className={style.container_toolbar}>
-            <span onClick={this.gotoManagePage}>管理</span>
-            <Toolbar {...toolbarPayload} />
+            <Toolbar {...toolBarPayload} />
           </div>
           <Banner imagePaths={imgPaths} />
           <Menus categories={this.props.categories}
@@ -88,5 +101,7 @@ export default connect(
   {
     ...frontActions,
     ...loginActions,
+    manage_logout,
+    manage_provide,
   }
 )(Front);

@@ -1,7 +1,7 @@
 import React, { PureComponent, } from 'react';
 import remark from 'remark';
 import { connect, } from 'react-redux';
-import { actions, } from '../../reducers/frontReducer';
+import { actions, } from '@/reducers/frontReducer';
 import remark2React from 'remark-react';
 import style from './style.css';
 const { get_article_detail, } = actions;
@@ -38,7 +38,6 @@ class Detail extends PureComponent {
         >
           {remark().use(remark2React).processSync(articleContent).contents}
         </div>
-        <button onClick={this.tmpClick}>测试</button>
       </div>
     );
   }

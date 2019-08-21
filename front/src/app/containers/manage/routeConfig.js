@@ -1,5 +1,9 @@
-import User from '../user/User';
-import Role from '../role/Role';
+import loadable from '@loadable/component';
+
+const User = loadable(()=>import('../user/User'));
+const Role = loadable(()=>import('../role/Role'));
+const Tag = loadable(()=>import('../tag/Tag'));
+const Article = loadable(()=>import('../article/Article'));
 
 export default [
     {
@@ -10,6 +14,16 @@ export default [
     {
         path: '/admin/manage/role',
         component: Role,
+        exact: true,
+    },
+    {
+        path: '/admin/manage/tag',
+        component: Tag,
+        exact: true,
+    },
+    {
+        path: '/admin/manage/article',
+        component: Article,
         exact: true,
     },
 ];

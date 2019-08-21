@@ -3,11 +3,18 @@
     "plugins": ["react-hot-loader/babel", ["import", {
             "libraryName": "antd",
             "style": true
-        }], "@babel/plugin-proposal-function-bind", ["@babel/plugin-proposal-decorators", {
+        }], "@babel/proposal-function-bind", ["@babel/proposal-decorators", {
             "legacy": true,
         }],
-        ["@babel/plugin-proposal-class-properties", {
+        ["@babel/proposal-class-properties", {
             "loose": true
-        }], "@babel/plugin-transform-runtime"
-    ]
+        }], "@babel/syntax-dynamic-import","@babel/transform-runtime"
+    ],
+    "env":{
+        "test":{
+            "plugins":[
+                "istanbul"
+            ]
+        }
+    }
 }

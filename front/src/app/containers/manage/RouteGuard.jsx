@@ -23,17 +23,18 @@ function getOneActivePath(menus) {
  * @param {*} menus 用户对应权限的导航菜单数组
  */
 function getAuthResult(path, menus) {
-    let result = false;
     for (const menu of menus) {
         if (menu.children.length === 0
             && menu.route === path) {
             return true;
         }
         if (menu.children.length > 0) {
-            result = getAuthResult(path, menu.children);
+            const r = getAuthResult(path, menu.children);
+            if (r) return r;
+            else continue;
         }
     }
-    return result;
+    return false;
 }
 
 function whenNoAuth(method, logout) {
@@ -59,10 +60,9 @@ function whenAuth(redirect, routes) {
         </>
     );
 }
-
 export default function ({ routes, location, userInfo, manage_error, logout, }) {
     if (!userInfo) {
-       return whenNotSignIn(manage_error, logout);
+        return whenNotSignIn(manage_error, logout);
     }
     const { menus, } = userInfo;
     const { pathname, } = location;

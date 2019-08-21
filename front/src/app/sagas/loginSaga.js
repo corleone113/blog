@@ -23,7 +23,7 @@ export function* signUpOrInFlow(method) {
       yield put({
         type: defaultActions.SET_MESSAGE,
         msgContent: res.message,
-        msgType: res.code === 0 ? 1 : 0,
+        msgType: res.code ===0 ? 1 : 0,
       });
     }
 

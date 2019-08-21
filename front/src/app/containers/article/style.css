@@ -1,0 +1,77 @@
+.topContainer {
+    overflow: auto;
+    background: #fff;
+}
+
+.topContainer h2 {
+    display: inline;
+}
+
+.articleListContainer {
+    margin-top: 10px;
+    height: 600px;
+    min-width: 1000px;
+    margin-left: 1.5vw;
+}
+
+.paginationStyle {
+    margin-top: 20px;
+    text-align: center;
+    background: #fff;
+}
+
+.cellContainer {
+    border-bottom: solid thin #ddd;
+    display: flex;
+    flex-direction: row;
+    height: 80px;
+}
+
+.addButtonContainer {
+    border-bottom: solid thin #ddd;
+    margin-left: 1.5vw;
+    display: flex;
+    height: 60px;
+    min-width: 1000px;
+    align-items: center;
+}
+
+.cellAboutArticle {
+    display: flex;
+    flex-direction: column;
+    flex: 4;
+    align-content: center;
+    justify-content: center;
+}
+
+.cellState {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+}
+
+.cellOperation {
+    flex: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.articleTitle {
+    max-width: 500px;
+    margin-bottom: 10px;
+    font-size: 15px;
+    color: #000;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.articleInfo span {
+    font-size: 12px;
+    margin-right: 10px;
+    display: inline-block;
+    color: #6b6b6b;
+}

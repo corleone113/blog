@@ -1,7 +1,7 @@
 import React, { Component, } from 'react';
 import { connect, } from 'react-redux';
 import { Card, Table, Button, Modal, Form, Input, Transfer, Select, } from 'antd';
-import { actions as manageActions, } from '../../reducers/manageReducer';
+import { actions as manageActions, } from '@/reducers/manageReducer';
 import style from './style.css';
 
 const entity = 'user';
@@ -9,16 +9,14 @@ const { Option, } = Select;
 
 class User extends Component {
     componentDidMount() {
-        this.props.manage_change({ selectedRowKeys: [], selectedRows: [], });
-        this.props.manage_get(entity, {});
+        this.props.manage_change({selectedRows:[], selectedRowKeys:[], });
+        this.props.manage_get(entity, this.query());
         this.props.manage_get_all('role');
     }
-    componentDidUpdate() {
-        if (this.props.roles.length > 0 && this.props.targetRole ==='') {
-            const defaultRole = this.props.roles.find(role => role.name !== '管理员');
-            this.props.manage_change({ targetRole: defaultRole.name, });
-        }
-    }
+    query = () => ({
+        pageNum: 1,
+        username: JSON.stringify({ $ne: 'admin', }),
+    });
     onSearch = () => {
         const values = this.searchForm.props.form.getFieldsValue();
         const where = Object.keys(values).reduce((memo, key) => {
@@ -27,15 +25,24 @@ class User extends Component {
             }
             return memo;
         }, {});
-        this.props.manage_get(entity, { where, });
+        const finalQuery = { ...this.query(), ...where, };
+        if (finalQuery.username && Object.keys(where).length>0) {
+            finalQuery.username = JSON.stringify(finalQuery.username);
+            console.log('User query:', finalQuery);
+        }
+        if (finalQuery.username === '"admin"') {
+            delete finalQuery.username;
+            finalQuery.errorCondition = '';
+        }
+        this.props.manage_get(entity, finalQuery);
     }
     setUserRole = () => {//给角色授与资源
         if (this.props.selectedRowKeys.length === 0) {
             this.props.manage_error('请至少选择一个用户!');
             this.props.manage_change({ userVisible: false, });
         } else {
-            console.log('all selected keys:', this.props.selectedRowKeys, this.props.selectedRows);
-            this.props.manage_change({ userVisible: true, });
+            const defaultRole = this.props.roles.find(role => role.name !== '系统管理员');
+            this.props.manage_change({ userVisible: true, targetRole: defaultRole.name, });
         }
     }
     setUserRoleCancel = () => {
@@ -44,13 +51,16 @@ class User extends Component {
     setUserRoleOk = () => {
         const ids = Array.from(this.props.targetKeys);
         const sets = [];
-        for (let i = 0; i < ids.length; ++i) {
-            sets.push({ role: this.props.targetRole, });
+        if (ids.length === 0) {
+            this.props.manage_error('至少选择一个要分配角色的用户!');
+        } else {
+            for (let i = 0; i < ids.length; ++i) {
+                sets.push({ role: this.props.targetRole, });
+            }
+            this.props.manage_set(entity, { ids, sets, }, this.query());
         }
-        this.props.manage_set(entity, { ids, sets, }, entity);
     }
     onUserChange = (targetKeys) => {
-        console.log('the targetkeys:', targetKeys);
         this.props.manage_change({ targetKeys, });
     }
     onRoleChange = (value) => {
@@ -69,6 +79,11 @@ class User extends Component {
                 key: 'email',
             },
             {
+                title: '角色类型',
+                dataIndex: 'role',
+                key: 'role',
+            },
+            {
                 title: '性别',
                 dataIndex: 'gender',
                 key: 'gender',
@@ -77,18 +92,19 @@ class User extends Component {
                 },
             },
         ];
-        const { list, pageNum, pageSize, total, isFetching, record, userVisible, targetKeys, roles, selectedRowKeys, } = this.props;
-        const filteredList = list.filter(user => user.username !== 'admin');
+        const { list, pageNum, total, pageSize, isFetching, record, userVisible, targetKeys, roles, selectedRowKeys, } = this.props;
+        // const filteredList = list.filter(user => user.username !== 'admin');
         const pagination = {
             current: pageNum,
             pageSize: pageSize,
-            total,
+            total: total,
             showQuickJumper: true,
             showTotal: (total) => {
-                return `共计${total-1}条`;
+                return `共计${total}条`;
             },
             onChange: (pageNum) => {
-                this.props.manage_get(entity, { pageNum, });
+                this.props.manage_change({ selectedRowKeys: [], selectedRows: [], pageNum, });
+                this.props.manage_get(entity, { ...this.query(), pageNum, });
             },
         };
         const rowSelection = {
@@ -133,7 +149,7 @@ class User extends Component {
                     </Button.Group>
                     <Table
                         columns={columns}
-                        dataSource={filteredList}
+                        dataSource={list}
                         pagination={pagination}
                         loading={isFetching}
                         rowKey={row => row._id}
@@ -173,14 +189,14 @@ class UserModal extends React.Component {
                 <label className={style.label_pos}>角色:</label>
                 <Select defaultValue={targetRole} style={{ width: 179, }} className={style.select_pos} onChange={roleChange}>
                     {roles.map(role => {
-                        const isAdmin = role.name === '管理员';
+                        const isAdmin = role.name === '系统管理员';
                         return (<Option value={role.name} disabled={isAdmin} key={role._id}>{role.name}</Option>);
                     })}
                 </Select>
                 <Transfer
                     dataSource={selectedRows}
                     targetKeys={targetKeys}
-                    titles={['待分配', `已分配至${targetRole}`, ]}
+                    titles={['待分配', '已分配', ]}
                     onChange={onChange}
                     render={row => row.username}
                     rowKey={row => row._id}

@@ -12,19 +12,19 @@ const proxy = httpProxy.createProxyServer();
 
 app.use('/', connectHistoryApiFallback());
 app.use(compression());
-app.use('/', express.static(path.resolve(__dirname, '../..', 'build')));
+app.use('/', express.static(path.resolve(__dirname, '../..', 'dist')));
 app.use('/', express.static(path.join(__dirname, '../..', 'static')));
 app.use('/api', (req, res) => {
   proxy.web(req, res, {
     target: apiUrl,
   });
 });
-
+console.log('Now the process.env.NODE_ENV:', process.env.NODE_ENV);
 if (process.env.NODE_ENV !== 'production') {
   const Webpack = require('webpack');
   const WebpackDevMiddleware = require('webpack-dev-middleware');
   const WebpackHotMiddleware = require('webpack-hot-middleware');
-  const webpackConfig = require('../../webpack.dev');
+  const webpackConfig = require('../../build/webpack.dev');
 
   const compiler = Webpack(webpackConfig);
 
@@ -44,6 +44,6 @@ app.listen(config.port, (err) => {
   if (err) {
     console.error(err);
   } else {
-    console.log(`===>open${targetUrl} in a browser to view the app`);
+    console.log(`===>open ${targetUrl} in a browser to view the app`);
   }
 });

@@ -1,13 +1,10 @@
 import React from 'react';
 import { Layout, } from 'antd';
-import Toolbar from '../../components/toolbar/Toolbar';
+import Toolbar from '@/components/toolbar/Toolbar';
 import styles from './style.css';
 const { Header, } = Layout;
 const icon = require('./blog.png');
 export default class extends React.Component {
-    // componentWillMount() {
-    //     this.props.dispatch({ type: 'login/loadUser', });
-    // }
     render() {
         const { userInfo, manage_logout, history: { push, }, } = this.props;
         const toolbarPayload = {

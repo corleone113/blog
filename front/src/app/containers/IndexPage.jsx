@@ -1,17 +1,19 @@
 import { hot, } from 'react-hot-loader/root';
 import React, { PureComponent, } from 'react';
+import loadable from '@loadable/component';
 import { BrowserRouter as Router, Route, Switch, Redirect, } from 'react-router-dom';
 import { notification, Layout, } from 'antd';
 import 'normalize.css/normalize.css';
 import { connect, } from 'react-redux';
 import { actions, } from '../reducers';
-import NotFound from '../components/notFound/NotFound';
-import Front from './front/Front';
-import Login from './login/Login';
-import Manage from './manage/Manage';
 import style from './index.css';
 const { clear_msg, } = actions;
 const { Footer, } = Layout;
+const Manage = loadable(()=>import('./manage/Manage'));
+const NotFound = loadable(()=>import('@/components/notFound/NotFound'));
+const Front = loadable(()=>import('./front/Front'));
+const Login = loadable(()=>import('./login/Login'));
+
 class IndexPage extends PureComponent {
   constructor(props) {
     super(props);
@@ -36,7 +38,7 @@ class IndexPage extends PureComponent {
           <Switch>
             <Route component={Manage} path="/admin/manage" />
             <Route component={Login}
-              path="/login"
+              path="/login" exact
             />
             <Route component={Front} path="/public" />
             <Redirect exact from="/" to="/public" />
@@ -57,8 +59,11 @@ function mapStateToProps(state) {
     userInfo: state.globalState.userInfo,
   };
 }
-
-export default hot(connect(
+let DefaultIndex = connect(
   mapStateToProps,
   { clear_msg, }
-)(IndexPage));
+)(IndexPage);
+if (process.env.NODE_ENV === 'development') {
+  DefaultIndex = hot(DefaultIndex);
+}
+export default DefaultIndex;

@@ -5,10 +5,6 @@ import {
     getPlainObj,
 } from '../util';
 export default class Base {
-    // constructor(model, query) {
-    //     this.model = model;
-    //     this.query = query;
-    // }
     findAll(query, ...columns) {
         return new Promise((resolve, reject) => {
             this.Model.find(query, ...columns).exec((err, data) => {

@@ -3,11 +3,11 @@
     left: 226px;
     margin-bottom: 10px;
 }
-.label_pos{
+
+.label_pos {
     position: absolute;
     right: 281px;
     z-index: 1;
     font-size: 15px;
     top: 85px;
-    font-weight: bold;
 }

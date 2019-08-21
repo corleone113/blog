@@ -29,25 +29,30 @@ router.get('/captcha', (req, res) => {
     });
     responseClient(res, 200, 0, '请求成功', captObj.data);
 });
-const getMenuAndSign = async (req, user) => {
-    const result = await roleService.findAll({
-        name: user.role,
-    });
-    const resource_names = result[0].resources;
-    let resources = [];
-    for (let i = 0; i < resource_names.length; ++i) {
-        resources.push(resourceService.findAll({
-            name: resource_names[i],
-        }));
+const getMenuAndSign = async (req, res, user) => {
+    try {
+        const result = await roleService.findAll({
+            name: user.role,
+        });
+        const resource_names = result[0].resources;
+        let resources = [];
+        for (let i = 0; i < resource_names.length; ++i) {
+            resources.push(resourceService.findAll({
+                name: resource_names[i],
+            }));
+        }
+        resources = await Promise.all(resources);
+        resources = resources.map(r => r[0]);
+        user.menus = resourceService.getTrees(resources);
+        const jwtSecret = config.forSecret + new Date().toLocaleString();
+        req.session.token = sign(user, jwtSecret);
+        const data = fs.readFileSync(configPath);
+        fs.writeFileSync(configPath, data.toString().replace(/(jwtSecret:)'[\S\s]*',/, `$1'${jwtSecret}',`));
+        return user;
+    } catch (err) {
+        console.error('Account error:', err);
+        return responseClient(res, 203, 1, '获取用户资源失败!', err);
     }
-    resources = await Promise.all(resources);
-    resources = resources.map(r => r[0]);
-    user.menus = resourceService.getTrees(resources);
-    const jwtSecret = config.forSecret + new Date().toLocaleString();
-    req.session.token = sign(user, jwtSecret);
-    const data = fs.readFileSync(configPath);
-    fs.writeFileSync(configPath, data.toString().replace(/(jwtSecret:)'[\S\s]*',/, `$1'${jwtSecret}',`));
-    return user;
 };
 router.post('/signin', async (req, res) => {
     const {
@@ -65,13 +70,8 @@ router.post('/signin', async (req, res) => {
         const user = result[0];
         if (sha2(password + SHA2_SUFFIX) === user.password) {
             delete user.password;
-            try {
-                const signedUser = await getMenuAndSign(req, user);
-                return responseClient(res, 200, 0, '登录成功!', signedUser);
-            } catch (err) {
-                console.log('the error:', err);
-                return responseClient(res, 200, 1, '获取用户资源失败!', err);
-            }
+            const signedUser = await getMenuAndSign(req, res, user);
+            return responseClient(res, 200, 0, '登录成功!', signedUser);
         }
     } else if (result.length > 1) {
         return responseClient(res, 200, 1, '用户状态异常!', null);
@@ -101,7 +101,7 @@ router.post('/signup', (req, res) => {
     user.password = sha2(user.password + SHA2_SUFFIX);
     user.phone = prefix + '-' + phone;
     user.address = address.split(',').join('-');
-    user.role = '用户';
+    user.role = '博客管理员';
     userService.create(user, {
         username: user.username,
     }, async result => {
@@ -109,7 +109,7 @@ router.post('/signup', (req, res) => {
             case status.SUCCESS:
                 const user = result.data;
                 delete user.password;
-                const signedUser = await getMenuAndSign(req, user);
+                const signedUser = await getMenuAndSign(req, res, user);
                 return responseClient(res, 200, 0, '注册成功!', signedUser);
             case status.EXISTED:
                 return responseClient(res, 200, 1, '该用户已注册!', null);
@@ -121,7 +121,7 @@ router.post('/signup', (req, res) => {
 
 router.get('/logout', (req, res) => {
     if (!req.session.token) {
-        responseClient(res, 200, 1, '已退出!', null);
+        responseClient(res, 200, 1, '会话过期且已退出!', 2);
     } else {
         delete req.session.token;
         responseClient(res, 200, 0, '退出成功!', 2);

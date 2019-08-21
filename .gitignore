@@ -4,7 +4,9 @@ server/package-lock.json
 server/node_modules
 front/package-lock.json
 front/node_modules
-front/src/test
+front/tmpCode
+front/dll
+front/dist
 .vscode/
 server/tmpCode
 package-lock.json

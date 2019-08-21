@@ -9,9 +9,9 @@ export default
     const menu = (
       <Menu>
         {items.map((item) => (
-          <Menu.Item key={item.title}>
+          <Menu.Item key={item.title}
+          onClick={item.todo}>
             <span className="ant-dropdown-link"
-              onClick={item.todo}
             >
               {item.title}
             </span>

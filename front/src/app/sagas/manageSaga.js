@@ -56,11 +56,11 @@ export function* manageGetAllFlow(method) {
     while (true) {
         const {
             entity,
+            query,
         } = yield take(
             manageActions.MANAGE_GET_ALL_REQ
         );
-        const res = yield call(method, get, `admin/manage/${entity}?pageSize=n`);
-        console.log('^^^^^saga manage get all>>>> res:', res);
+        const res = yield call(method, get, `admin/manage/${entity}?pageSize=n&${querystring.stringify(query)}`);
         if (res && res.data)
             yield call(manageRes, {
                 [`${entity}s`]: res.data.list,
@@ -76,8 +76,17 @@ export function* manageGetFlow(method) {
         } = yield take(
             manageActions.MANAGE_GET_REQ
         );
-        const res = yield call(method, get, `admin/manage/${entity}?pageNum=${payload.pageNum}&pageSize=${payload.pageSize}&${querystring.stringify(payload.where)}`);
-        console.log('^^^^^saga manage get res:', res);
+        const {
+            pageNum,
+            pageSize,
+            ...where
+        } = payload;
+        let url = `admin/manage/${entity}?pageNum=${pageNum?pageNum:1}&pageSize=${pageSize?pageSize:5}`;
+        if (where && Object.keys(where).length > 0) {
+            url += `&${querystring.stringify(where)}`;
+        }
+        console.log('the where:', where, querystring.stringify(where));
+        const res = yield call(method, get, url);
         if (res.code !== 0 || res.data === null) {
             yield call(setMessage, res);
             continue; // 不能使用return，否则会跳出循环
@@ -90,15 +99,14 @@ export function* manageGetFlow(method) {
     }
 }
 
-function* afterRequest(res, search) {
+function* afterRequest(res, entity, query) {
     yield call(setMessage, res);
     yield put({
         type: manageActions.MANAGE_GET_REQ,
-        entity: search,
-        payload: {
+        entity,
+        payload: query ? query : {
             pageNum: 1,
             pageSize: 5,
-            where: {},
         },
     });
 }
@@ -107,7 +115,7 @@ export function* manageCreateFlow(method) {
         const {
             entity,
             payload,
-            search,
+            query,
         } = yield take(manageActions.MANAGE_CREATE_REQ);
         const res = yield call(method, request, {
             url: `admin/manage/${entity}`,
@@ -121,7 +129,7 @@ export function* manageCreateFlow(method) {
             yield call(setMessage, res);
             continue; // 不能使用return，否则会跳出循环
         }
-        yield call(afterRequest, res, search);
+        yield call(afterRequest, res, entity, query);
     }
 }
 export function* manageSetFlow(method) {
@@ -129,7 +137,7 @@ export function* manageSetFlow(method) {
         const {
             entity,
             payload,
-            search,
+            query,
         } = yield take(manageActions.MANAGE_SET_REQ);
         const res = yield call(method, request, {
             url: `admin/manage/${entity}`,
@@ -148,7 +156,7 @@ export function* manageSetFlow(method) {
             yield call(setMessage, res);
             continue; // 不能使用return，否则会跳出循环
         }
-        yield call(afterRequest, res, search);
+        yield call(afterRequest, res, entity, query);
     }
 }
 export function* manageDeleteFlow(method) {
@@ -157,7 +165,7 @@ export function* manageDeleteFlow(method) {
             id,
             entity,
             payload,
-            search,
+            query,
         } = yield take(manageActions.MANAGE_DELETE_REQ);
         let url = `admin/manage/${entity}`;
         id && (url += `/${id}`);
@@ -166,7 +174,6 @@ export function* manageDeleteFlow(method) {
             method: 'DELETE',
         };
         payload && (config.data = payload);
-        console.log('^^^^^^^^^^^^^', url);
         const res = yield call(method, request, config);
         yield call(manageRes, {
             editVisible: false,
@@ -177,6 +184,58 @@ export function* manageDeleteFlow(method) {
             yield call(setMessage, res);
             continue; // 不能使用return，否则会跳出循环
         }
-        yield call(afterRequest, res, search);
+        yield call(afterRequest, res, entity, query);
+    }
+}
+
+export function* manageRelativeDeleteFlow(method) {
+    while (true) {
+        const {
+            entity,
+            relative,
+            beforeQuery,
+            getSets,
+            id,
+            payload,
+            query,
+        } = yield take(manageActions.MANAGE_RELATIVE_DELETE);
+        try {
+            for (const query of beforeQuery) {
+                const res = yield call(method, get, `admin/manage/${relative}?pageSize=n&${querystring.stringify(query)}`);
+                const ids = [],
+                    sets = [];
+                if (res.data.list.length === 0) {
+                    continue;
+                }
+                for (const item of res.data.list) {
+                    ids.push(item._id);
+                    sets.push(getSets(query, item));
+                }
+                const setData = {
+                    ids,
+                    sets,
+                };
+                console.log('the setData:', setData);
+                yield call(request, {
+                    url: `admin/manage/${relative}`,
+                    method: 'PUT',
+                    data: setData,
+                });
+            }
+            yield put({
+                type: manageActions.MANAGE_DELETE_REQ,
+                id,
+                entity,
+                payload,
+                query,
+            });
+        } catch (err) {
+            console.error('Catch the error:', err);
+            yield put({
+                type: defaultActions.SET_MESSAGE,
+                msgContent: '删除中途失败，已回滚!',
+                msgType: 0,
+            });
+        }
     }
 }

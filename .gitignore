@@ -7,6 +7,7 @@ front/node_modules
 front/tmpCode
 front/dll
 front/dist
+front/coverage
 .vscode/
 server/tmpCode
 package-lock.json

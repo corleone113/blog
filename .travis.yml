@@ -7,6 +7,10 @@ cache:
 node_js:
   - "12"
 # 只对指定的分支执行构建 参考 https://docs.travis-ci.com/user/customizing-the-build/#building-specific-branches
+before_install:
+  - export CHROME_BIN=chromium-browser
+  - export DISPLAY=:99.0
+  - sh -e /etc/init.d/xvfb star
 install:
   - npm install
 branches:

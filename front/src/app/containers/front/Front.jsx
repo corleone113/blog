@@ -3,19 +3,18 @@ import loadable from '@loadable/component';
 import PropTypes from 'prop-types';
 import { connect, } from 'react-redux';
 import { Switch, Route, } from 'react-router-dom';
-import Banner from '@/components/banner/Banner';
-import Menus from '@/components/menu/Menus';
-import Toolbar from '@/components/toolbar/Toolbar';
-import Loading from '@/components/loading/Loading';
 import { actions as frontActions, } from '@/reducers/frontReducer';
 import { actions as loginActions, } from '@/reducers/loginReducer';
 import { actions as manageActions, } from '@/reducers/manageReducer';
 import style from './style.css';
-import { homeBannerImages as imgPaths, } from '@/config/config';
-// import {homeBannerImages as imgPaths} from '@/@/config/config'
-const {manage_logout, manage_provide, }=manageActions;
-const Home = loadable(()=>import('../home/Home'));
-const Detail = loadable(()=>import('@/components/detail/Detail'));
+import { homeBannerImages as imgPaths, } from '@/constants';
+const { manage_logout, manage_provide, } = manageActions;
+const Home = loadable(() => import('../home/Home'));
+const Detail = loadable(() => import('@/components/detail/Detail'));
+const Banner = loadable(() => import('@/components/banner/Banner'));
+const Menus = loadable(() => import('@/components/menu/Menus'));
+const Loading = loadable(() => import('@/components/loading/Loading'));
+const Toolbar = loadable(() => import('@/components/toolbar/Toolbar'));
 
 class Front extends Component {
   static defaultProps = {
@@ -24,7 +23,7 @@ class Front extends Component {
   static propTypes = {
     categories: PropTypes.array.isRequired,
   }
-  state={userInfo: JSON.parse(sessionStorage.getItem('info')), };
+  state = { userInfo: JSON.parse(sessionStorage.getItem('info')), };
   componentDidMount() {
     this.props.get_all_tags();
     this.props.manage_provide(this.logout);
@@ -38,9 +37,9 @@ class Front extends Component {
   gotoManagePage = () => {
     this.props.history.push('/admin/manage');
   }
-  logout=()=>{
+  logout = () => {
     sessionStorage.clear();
-    this.setState({userInfo:null, });
+    this.setState({ userInfo: null, });
   }
   render() {
     const payloadBeforeSignIn = {
@@ -52,8 +51,8 @@ class Front extends Component {
       items: [{ title: '管理', todo: this.gotoManagePage, },
       { title: '退出', todo: this.props.manage_logout, }, ],
       title: `欢迎, ${this.state.userInfo && (this.state.userInfo.username)}`,
-  };
-  const toolBarPayload= this.state.userInfo?payloadAfterSignIn:payloadBeforeSignIn;
+    };
+    const toolBarPayload = this.state.userInfo ? payloadAfterSignIn : payloadBeforeSignIn;
     return (
       <>
         <div>
@@ -85,7 +84,6 @@ class Front extends Component {
       </>
     );
   }
-
 }
 
 function mapStateToProps(state) {

@@ -1,22 +1,18 @@
 import React, { PureComponent, } from 'react';
+import loadable from '@loadable/component';
 import { connect, } from 'react-redux';
 import { actions as loginActions, } from '@/reducers/loginReducer';
-import Banner from '@/components/banner/Banner';
-import LoginForm from './LoginForm';
-import { loginBannerImages as imgPaths, } from '@/config/config';
 
 const captchaUrl = 'http://localhost:2333/admin/captcha';
+const LoginForm = loadable(() => import('./LoginForm'));
 
 class LoginPage extends PureComponent {
   constructor() {
     super();
+    console.log('the LoginForm:', <LoginForm />);
   }
   componentDidMount() {
-    this.getExtraH();
     this.props.provide_api(this.afterLogin);
-  }
-  componentDidUpdate() {
-    this.getExtraH();
   }
   afterLogin = (userInfo) => {
     sessionStorage.setItem('info', JSON.stringify(userInfo));
@@ -36,16 +32,10 @@ class LoginPage extends PureComponent {
   returnHome = () => {
     this.props.history.push('/');
   }
-  getExtraH = () => {
-    const frm = document.getElementsByTagName('form')[0];
-    this.extraH = getComputedStyle(frm).marginTop;
-  }
   render() {
     this.captchaUrl = captchaUrl + '?ts=' + Date.now();
     const isLogin = this.props.to === 'goto_signin';
-    const extraH = isLogin ? '0px' : parseFloat(this.extraH) * 2 + 'px';
     return (
-      <>
         <LoginForm
           captchaUrl={this.captchaUrl}
           capTs={this.props.par}
@@ -55,10 +45,6 @@ class LoginPage extends PureComponent {
           returnHome={this.returnHome}
           wrappedComponentRef={instance => this.loginForm = instance}
         />
-        <Banner imagePaths={imgPaths}
-          size={{ height: `calc(100vh + ${extraH})`, minHeight: '940px', }}
-        />
-      </>
     );
   }
 }

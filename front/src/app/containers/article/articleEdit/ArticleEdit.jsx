@@ -6,6 +6,7 @@ import reactRenderer from 'remark-react';
 import { Input, Select, Button, Modal, } from 'antd';
 import { actions, } from '@/reducers/manageReducer';
 import dateFormat from 'dateformat';
+import { manager, } from '@/constants';
 
 const { Option, } = Select;
 const entity = 'article';
@@ -38,17 +39,19 @@ class ArticleEdit extends Component {
     }
 
     componentDidMount() {
-        this.props.manage_get_all('tag', this.query);
+        this.props.manage_get_all('tag', this.query());
     }
-    getTagsBase=()=>{
-        if(this.props.tags.length ===0){
+    getTagsBase = () => {
+        if (this.props.tags.length === 0) {
             return [];
-        }else {
-            return this.props.tags.map((tag)=>tag.name);
+        } else {
+            return this.props.tags.map((tag) => tag.name);
         }
     }
-    query = {
-        creator: this.props.user,
+    query = () => {
+        return manager() === 'admin' ? null : {
+            creator: manager(),
+        };
     }
     //正文内容
     onChanges = (e) => {

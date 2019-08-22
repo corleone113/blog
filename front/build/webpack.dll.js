@@ -1,21 +1,25 @@
 const path = require('path');
 const webpack = require('webpack');
-const {CleanWebpackPlugin, } = require('clean-webpack-plugin');
+const {
+    CleanWebpackPlugin,
+} = require('clean-webpack-plugin');
 module.exports = {
     mode: 'production',
     entry: {
-        react: ['react', 'react-dom', ],
+        react: ['react', 'react-dom', 'react-router-dom', ],
+        redux: ['redux', 'react-redux', 'redux-saga', ],
+        other: ['remark', 'remark-react', 'axios', 'dateformat', path.resolve(__dirname, '../src/app/configureStore'), ],
     },
     output: {
-        path: path.resolve(__dirname, '../dll'),
         filename: '[name].dll.js',
-        library: 'react',
+        path: path.resolve(__dirname, '../dll'),
+        library: '[name]',
     },
     plugins: [
         new CleanWebpackPlugin(),
         new webpack.DllPlugin({
-            name: 'react',
-            path: path.resolve(__dirname, '../dll', 'react.manifest.json'),
-        }),
+            name: '[name]',
+            path: path.join(__dirname, '../dll', '[name].manifest.json'),
+        },),
     ],
 };

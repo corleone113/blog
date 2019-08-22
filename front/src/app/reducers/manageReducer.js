@@ -97,15 +97,16 @@ export const actions = {
             msgType: 0,
         };
     },
-    manage_relative_delete(entity,
+    manage_relative_change(entity,
         relative,
         beforeQuery,
         getSets,
         id,
         payload,
-        query, ) {
+        query,
+        isDelete, ) {
         return {
-            type: manageActions.MANAGE_RELATIVE_DELETE,
+            type: manageActions.MANAGE_RELATIVE_CHANGE,
             entity,
             relative,
             beforeQuery,
@@ -113,6 +114,7 @@ export const actions = {
             id,
             payload,
             query,
+            isDelete,
         };
     },
     manage_provide(method) {

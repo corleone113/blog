@@ -60,7 +60,9 @@ export function* manageGetAllFlow(method) {
         } = yield take(
             manageActions.MANAGE_GET_ALL_REQ
         );
-        const res = yield call(method, get, `admin/manage/${entity}?pageSize=n&${querystring.stringify(query)}`);
+        let url=`admin/manage/${entity}?pageSize=n`;
+        query && (url+=`&${querystring.stringify(query)}`);
+        const res = yield call(method, get, url);
         if (res && res.data)
             yield call(manageRes, {
                 [`${entity}s`]: res.data.list,
@@ -198,7 +200,8 @@ export function* manageRelativeDeleteFlow(method) {
             id,
             payload,
             query,
-        } = yield take(manageActions.MANAGE_RELATIVE_DELETE);
+            isDelete,
+        } = yield take(manageActions.MANAGE_RELATIVE_CHANGE);
         try {
             for (const query of beforeQuery) {
                 const res = yield call(method, get, `admin/manage/${relative}?pageSize=n&${querystring.stringify(query)}`);
@@ -222,18 +225,27 @@ export function* manageRelativeDeleteFlow(method) {
                     data: setData,
                 });
             }
-            yield put({
-                type: manageActions.MANAGE_DELETE_REQ,
-                id,
-                entity,
-                payload,
-                query,
-            });
+            if(isDelete){
+                yield put({
+                    type: manageActions.MANAGE_DELETE_REQ,
+                    id,
+                    entity,
+                    payload,
+                    query,
+                });
+            }else{
+                yield put({
+                    type: manageActions.MANAGE_SET_REQ,
+                    entity,
+                    payload,
+                    query,
+                });
+            }
         } catch (err) {
             console.error('Catch the error:', err);
             yield put({
                 type: defaultActions.SET_MESSAGE,
-                msgContent: '删除中途失败，已回滚!',
+                msgContent: isDelete?'删除中途失败，已回滚!':'修改失败，已回滚!',
                 msgType: 0,
             });
         }

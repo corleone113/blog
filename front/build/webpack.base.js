@@ -40,18 +40,13 @@ module.exports = {
         splitChunks: {
             chunks: 'all',
             minSize: 0,
-            minChunks: 1,
+            minChunks: 2,
             cacheGroups: {
-                vendors: {
-                    name: 'vendors',
-                    test: /node_modules/,
+                'antd-vendors': {
+                    test: (module) => (/antd/.test(module.context)),
                     priority: 1,
-                    minChunks: 10,
-                },
-                commons: {
-                    name: 'commons',
-                    minChunks: 10,
-                    priority: -1,
+                    minChunks: 8,
+                    reuseExistingChunk: false,
                 },
                 default: false,
             },
@@ -66,9 +61,7 @@ module.exports = {
             {
                 test: /\.css$/,
                 exclude: /node_modules/,
-                use: [
-                    // 'style-loader',
-                    {
+                use: [{
                         loader: MiniCssExtractPlugin.loader,
                         options: {
                             hmr: process.env.NODE_ENV === 'development',
@@ -130,13 +123,26 @@ module.exports = {
         new webpack.DllReferencePlugin({
             manifest: path.resolve(rootPath, 'dll', 'react.manifest.json'),
         }),
+        new webpack.DllReferencePlugin({
+            manifest: path.resolve(rootPath, 'dll', 'redux.manifest.json'),
+        }),
+        new webpack.DllReferencePlugin({
+            manifest: path.resolve(rootPath, 'dll', 'other.manifest.json'),
+        }),
         new HtmlWebpackPlugin({
             template: './template/index.html',
-            chunks: ['index', 'vendors', 'commons', ],
+            chunks: ['index', 'antd-vendors', ],
         }),
-        new AddHtmlAssets({
-            filepath: path.resolve(rootPath, 'dll', 'react.dll.js'),
-        }),
+        new AddHtmlAssets([{
+                filepath: path.resolve(rootPath, 'dll', 'react.dll.js'),
+            },
+            {
+                filepath: path.resolve(rootPath, 'dll', 'redux.dll.js'),
+            },
+            {
+                filepath: path.resolve(rootPath, 'dll', 'other.dll.js'),
+            },
+        ]),
         new MiniCssExtractPlugin({
             filename: devMode ? '[name].css' : '[name].[hash].css',
             chunkFilename: devMode ? '[id].css' : '[id].[hash].css',

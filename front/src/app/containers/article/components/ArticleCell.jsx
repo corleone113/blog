@@ -1,7 +1,7 @@
 import style from '../style.css';
 import React from 'react';
 import { Button, Popconfirm, } from 'antd';
-export const ArticleCell = (props) => (
+export default (props) => (
     <div className={style.cellContainer}>
         <div className={style.cellAboutArticle}>
             <p className={style.articleTitle}>{props.data.title}</p>

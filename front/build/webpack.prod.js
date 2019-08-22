@@ -4,7 +4,7 @@ const baseConfig = require('./webpack.base');
 
 module.exports = merge(baseConfig, {
     mode: 'production',
-    devtool: 'hidden-source-map',
+    devtool: false,
     plugins: [
         new webpack.DefinePlugin({
             'progress.env.NODE_ENV': JSON.stringify('production'),

@@ -70,5 +70,5 @@ module.exports = {
         ],
     }, ],
     forSecret:'corleone',
-    jwtSecret:'corleone2019-8-21 22:26:57',
+    jwtSecret:'corleone2019-8-23 0:52:52',
 };

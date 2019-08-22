@@ -1,11 +1,12 @@
 import React, { Component, } from 'react';
+import loadable from '@loadable/component';
 import { connect, } from 'react-redux';
-import { Card, Table, Button, Modal, Form, Input, Transfer, Select, } from 'antd';
+import { Card, Table, Button, } from 'antd';
 import { actions as manageActions, } from '@/reducers/manageReducer';
-import style from './style.css';
 
 const entity = 'user';
-const { Option, } = Select;
+const SearchForm = loadable(()=>import('@/components/searchForm'));
+const UserModal = loadable(()=>import('./components/UserModal'));
 
 class User extends Component {
     componentDidMount() {
@@ -57,7 +58,7 @@ class User extends Component {
             for (let i = 0; i < ids.length; ++i) {
                 sets.push({ role: this.props.targetRole, });
             }
-            this.props.manage_set(entity, { ids, sets, }, this.query());
+            this.props.manage_set(entity, { ids, sets, }, {...this.query(), pageNum:this.props.pageNum, });
         }
     }
     onUserChange = (targetKeys) => {
@@ -141,6 +142,8 @@ class User extends Component {
                         // where={where}
                         onSearch={this.onSearch}
                         wrappedComponentRef={inst => this.searchForm = inst}
+                        label="用户名"
+                        fieldName="username"
                     />
                 </Card>
                 <Card>
@@ -175,58 +178,6 @@ class User extends Component {
 }
 
 
-class UserModal extends React.Component {
-    render() {
-        const { visible, onOk, onCancel, onChange, targetKeys, selectedRows, roleChange, targetRole, roles, } = this.props;
-        return (
-            <Modal
-                title="分配角色"
-                visible={visible}
-                onOk={onOk}
-                onCancel={onCancel}
-                destroyOnClose
-            >
-                <label className={style.label_pos}>角色:</label>
-                <Select defaultValue={targetRole} style={{ width: 179, }} className={style.select_pos} onChange={roleChange}>
-                    {roles.map(role => {
-                        const isAdmin = role.name === '系统管理员';
-                        return (<Option value={role.name} disabled={isAdmin} key={role._id}>{role.name}</Option>);
-                    })}
-                </Select>
-                <Transfer
-                    dataSource={selectedRows}
-                    targetKeys={targetKeys}
-                    titles={['待分配', '已分配', ]}
-                    onChange={onChange}
-                    render={row => row.username}
-                    rowKey={row => row._id}
-                />
-
-            </Modal>
-        );
-    }
-}
-
-@Form.create()
-class SearchForm extends React.Component {
-    render() {
-        const { form: { getFieldDecorator, }, onSearch, } = this.props;
-        return (
-            <Form layout="inline">
-                <Form.Item label="用户名">
-                    {getFieldDecorator('username', {
-                        initialValue: '',
-                    })(
-                        <Input onPressEnter={onSearch} />
-                    )}
-                </Form.Item>
-                <Form.Item>
-                    <Button onClick={onSearch} shape="circle" icon="search" />
-                </Form.Item>
-            </Form>
-        );
-    }
-}
 
 
 

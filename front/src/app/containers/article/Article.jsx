@@ -1,12 +1,14 @@
 import React, { Component, } from 'react';
+import loadable from '@loadable/component';
 import { connect, } from 'react-redux';
 import style from './style.css';
-import { ArticleCell, } from './components/ArticleCell';
-import ArticleEdit from './articleEdit/ArticleEdit';
 import { Pagination, Breadcrumb, Button, Empty, } from 'antd';
 import { actions, } from '@/reducers/manageReducer';
+import { manager, } from '@/constants';
 
 const entity = 'article';
+const ArticleCell = loadable(()=>import('./components/ArticleCell'));
+const ArticleEdit = loadable(()=>import('./articleEdit/ArticleEdit'));
 
 class AdminManagerArticle extends Component {
     state = { isEdit: false, payload: null, recordNum: 1, }
@@ -14,13 +16,18 @@ class AdminManagerArticle extends Component {
 
         this.props.manage_get(entity, this.query());
     }
-    query=()=>({
-        pageNum:this.state.recordNum,
-        author: JSON.parse(sessionStorage.getItem('info')).username,
-    });
+    query = () => {
+        console.log('what is manager:', manager);
+        return manager() === 'admin' ? {
+            pageNum: this.state.recordNum,
+        } : {
+                pageNum: this.state.recordNum,
+                author: manager(),
+            };
+    };
     hide_edit = () => {
         this.setState({ isEdit: false, payload: null, });
-        this.props.manage_get(entity, this.query(), );
+        this.props.manage_get(entity, this.query());
     };
     render() {
         const editPayload = { targetArticle: this.state.payload, };
@@ -48,32 +55,32 @@ class AdminManagerArticle extends Component {
                             </div>
                             <div className={style.articleListContainer}>
                                 {
-                                    this.props.list.length ===0 ? <Empty />:
-                                    this.props.list.map((article) => (
-                                        <ArticleCell
-                                            edit_article={() => {
-                                                this.setState({ isEdit: true, payload: article, });
-                                            }}
-                                            history={this.props.history}
-                                            delete={(id) => {
-                                                this.props.manage_delete(entity, null, id, this.query());
-                                            }}
-                                            key={article._id} data={article} />
-                                    ))
+                                    this.props.list.length === 0 ? <Empty /> :
+                                        this.props.list.map((article) => (
+                                            <ArticleCell
+                                                edit_article={() => {
+                                                    this.setState({ isEdit: true, payload: article, });
+                                                }}
+                                                history={this.props.history}
+                                                delete={(id) => {
+                                                    this.props.manage_delete(entity, null, id, this.query());
+                                                }}
+                                                key={article._id} data={article} />
+                                        ))
                                 }
                             </div>
                             <div className={style.paginationStyle}>
                                 <Pagination
                                     defaultPageSize={5}
                                     onChange={(pageNum) => {
-                                        this.props.manage_get(entity, {...this.query(), pageNum, });
-                                        this.setState({recordNum:pageNum, });
+                                        this.props.manage_get(entity, { ...this.query(), pageNum, });
+                                        this.setState({ recordNum: pageNum, });
                                     }}
                                     current={this.props.pageNum}
                                     total={this.props.total}
                                 />
                             </div>
-                        </>) : <ArticleEdit {...editPayload} user={this.query().author}
+                        </>) : <ArticleEdit {...editPayload}
                             hide_edit={this.hide_edit} />}
             </div>)
         );

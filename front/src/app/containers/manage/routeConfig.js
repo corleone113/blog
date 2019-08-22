@@ -1,5 +1,4 @@
 import loadable from '@loadable/component';
-
 const User = loadable(()=>import('../user/User'));
 const Role = loadable(()=>import('../role/Role'));
 const Tag = loadable(()=>import('../tag/Tag'));

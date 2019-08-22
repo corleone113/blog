@@ -1,13 +1,16 @@
 import React, { Component, } from 'react';
+import loadable from '@loadable/component';
 import { connect, } from 'react-redux';
-import { Card, Table, Button, Modal, Form, Input, Popconfirm, Tree, } from 'antd';
+import { Card, Table, Button, Popconfirm, } from 'antd';
 import { actions as manageActions, } from '@/reducers/manageReducer';
 import style from './style.css';
-import { excludeResources, } from '@/config/config';
+import { excludeResources, } from '@/constants';
 
-const { TreeNode, } = Tree;
 const entity = 'role';
 const relative = 'user';
+const SearchForm = loadable(() => import('@/components/searchForm'));
+const EditModal = loadable(() => import('./components/EditModel'));
+const ResourceModal = loadable(() => import('./components/ResourceModal'));
 
 class Role extends Component {
     componentDidMount() {
@@ -18,6 +21,9 @@ class Role extends Component {
     query = () => ({ pageNum: 1, name: JSON.stringify({ $ne: '系统管理员', }), });
     onAdd = () => {
         this.props.manage_change({ editVisible: true, isCreate: true, });
+    }
+    toSet = (name) => () => {
+        return { role: name, };
     }
     onEditCancel = () => {
         this.props.manage_change({ editVisible: false, });
@@ -30,16 +36,16 @@ class Role extends Component {
         }
         const ids = [values.id, ];
         const sets = [{ name: values.name, }, ];
-        this.props.isCreate ? this.props.manage_create(entity, values, this.query()) : this.props.manage_set(entity, { ids, sets, }, this.query());
+        this.props.isCreate ? this.props.manage_create(entity, values, {...this.query(), pageNum:this.props.pageNum, }) : this.props.manage_relative_change(entity, relative, [{role: this.props.record.name, }, ], this.toSet(values.name), '', { ids, sets, }, {...this.query(), pageNum:this.props.pageNum, }, false);
     }
     onEdit = (record) => {
         this.props.manage_change({ editVisible: true, record, isCreate: false, });
     }
-    getSets = () => {
+    toRemove = () => {
         return { role: '', };
     }
     onDel = (record) => {
-        this.props.manage_relative_delete(entity, relative, [{ role: record.name, }, ], this.getSets, record._id, null, this.query());
+        this.props.manage_relative_change(entity, relative, [{ role: record.name, }, ], this.toRemove, record._id, null, { ...this.query(), pageNum: this.props.pageNum, }, true);
     }
     onDelAll = () => {
         console.log('the selectedKeys:', this.props.selectedRowKeys);
@@ -47,7 +53,7 @@ class Role extends Component {
         for (const role of this.props.selectedRows) {
             querys.push({ role: role.name, });
         }
-        this.props.manage_relative_delete(entity, relative, querys, this.getSets, '', { ids: this.props.selectedRowKeys, }, this.query());
+        this.props.manage_relative_change(entity, relative, querys, this.toRemove, '', { ids: this.props.selectedRowKeys, }, { ...this.query(), pageNum: this.props.pageNum, }, true);
     }
     onSearch = () => {
         const values = this.searchForm.props.form.getFieldsValue();
@@ -60,7 +66,6 @@ class Role extends Component {
         const finalQuery = { ...this.query(), ...where, };
         if (finalQuery.name && Object.keys(where).length > 0) {
             finalQuery.name = JSON.stringify(finalQuery.name);
-            console.log('Role query:', finalQuery);
         }
         if (finalQuery.name === '"系统管理员"') {
             delete finalQuery.name;
@@ -111,7 +116,7 @@ class Role extends Component {
         const ids = [this.props.record._id, ];
         const sets = [{ resources: finalKeys, }, ];
         // console.log('role resource ids and sets', ids, sets);
-        this.props.manage_set(entity, { ids, sets, }, this.query());
+        this.props.manage_set(entity, { ids, sets, }, { ...this.query(), pageNum: this.props.pageNum, });
     }
     render() {
         const columns = [
@@ -141,12 +146,11 @@ class Role extends Component {
                 },
             },
         ];
-        const { list, pageNum, pageSize, isFetching, editVisible, record, isCreate, selectedRowKeys, resourceVisible, checkedKeys, resources, } = this.props;
-        const filteredList = list.filter(role => role.name !== '系统管理员');
+        const { list, total, pageNum, pageSize, isFetching, editVisible, record, isCreate, selectedRowKeys, resourceVisible, checkedKeys, resources, } = this.props;
         const pagination = {
             current: pageNum,
             pageSize: pageSize,
-            total: filteredList.length,
+            total: total,
             showQuickJumper: true,
             showTotal: (total) => {
                 return `共计${total}条`;
@@ -192,6 +196,8 @@ class Role extends Component {
                         // where={where}
                         onSearch={this.onSearch}
                         wrappedComponentRef={inst => this.searchForm = inst}
+                        label="角色名称"
+                        fieldName="name"
                     />
                 </Card>
                 <Card>
@@ -210,7 +216,7 @@ class Role extends Component {
                     <Table
                         className={style.min_name_width}
                         columns={columns}
-                        dataSource={filteredList}
+                        dataSource={list}
                         pagination={pagination}
                         loading={isFetching}
                         rowKey={row => row._id}
@@ -240,101 +246,8 @@ class Role extends Component {
     }
 }
 
-@Form.create()
-class SearchForm extends React.Component {
-    render() {
-        const { form: { getFieldDecorator, }, onSearch, } = this.props;
-        return (
-            <Form layout="inline">
-                <Form.Item label="角色名称">
-                    {getFieldDecorator('name', {
-                        initialValue: '',
-                    })(
-                        <Input onPressEnter={onSearch} />
-                    )}
-                </Form.Item>
-                <Form.Item>
-                    <Button onClick={onSearch} shape="circle" icon="search" />
-                </Form.Item>
-            </Form>
-        );
-    }
-}
 
-class ResourceModal extends React.Component {
-    renderTree = (resources) => {
-        return resources.map(resource => {
-            const shouldDisable = resource.name === '权限管理' || resource.parent === '权限管理';
-            if (resource.children.length > 0) {
-                return (
-                    <TreeNode title={resource.name} key={resource.name} disabled={shouldDisable}>
-                        {this.renderTree(resource.children)}
-                    </TreeNode>
-                );
-            } else {
-                return <TreeNode title={resource.name} key={resource.name} disabled={shouldDisable} />;
-            }
-        });
-    }
-    render() {
-        const { visible, onOk, onCancel, onCheck, checkedKeys, resources, } = this.props;
-        return (
-            <Modal
-                title="设置权限"
-                visible={visible}
-                onOk={onOk}
-                onCancel={onCancel}
-                destroyOnClose
-            >
-                <Tree
-                    checkable
-                    defaultExpandAll
-                    onCheck={onCheck}
-                    checkedKeys={checkedKeys}
-                >
-                    <TreeNode title="分配权限" key={0} disabled>
-                        {this.renderTree(resources)}
-                    </TreeNode>
-                </Tree>
-            </Modal>
-        );
-    }
-}
 
-@Form.create()
-class EditModal extends React.Component {
-    render() {
-        const { visible, onOk, onCancel, form: { getFieldDecorator, }, record, isCreate, } = this.props;
-        return (
-            <Modal
-                title={isCreate ? '添加角色' : '修改角色'}
-                visible={visible}
-                onOk={onOk}
-                onCancel={onCancel}
-                destroyOnClose
-            >
-                <Form>
-                    {
-                        !isCreate &&
-                        getFieldDecorator('id', {
-                            initialValue: record._id,
-                        })(
-                            <Input type="hidden" />
-                        )
-                    }
-
-                    <Form.Item label="角色名称">
-                        {getFieldDecorator('name', {
-                            initialValue: isCreate ? '' : record.name,
-                        })(
-                            <Input onPressEnter={onOk} autoFocus />
-                        )}
-                    </Form.Item>
-                </Form>
-            </Modal>
-        );
-    }
-}
 function mapStateToProps(state) {
     return {
         // userInfo: state.manage.userInfo,

@@ -1,7 +1,6 @@
 import React from 'react';
 import { Route, Redirect, } from 'react-router-dom';
-
-
+import routes from './routeConfig';
 /**
  * 获取用户导航栏中第一个有效菜单(能导航到某页面)
  * @param {*} menus 用户对应权限的导航菜单数组
@@ -60,7 +59,7 @@ function whenAuth(redirect, routes) {
         </>
     );
 }
-export default function ({ routes, location, userInfo, manage_error, logout, }) {
+export default function ({ location, userInfo, manage_error, logout, }) {
     if (!userInfo) {
         return whenNotSignIn(manage_error, logout);
     }

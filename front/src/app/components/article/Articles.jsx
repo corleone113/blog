@@ -1,11 +1,8 @@
 import React, { PureComponent, } from 'react';
-import { Icon, } from 'antd';
+import {Icon, } from 'antd';
 import style from './style.css';
 
 export const ArticleListCell = (props) => (
-  // <div className={`${style.container} `} onClick={() => {
-  //     props.history.push(`/detail/${props.data._id}`, { id: props.data._id }); props.getArticleDetail(props.data._id)
-  // }}>
   <div className={`${style.container} `}
     onClick={() => {
       props.history.push(`/public/detail/${props.data._id}`, { id: props.data._id, });
@@ -26,7 +23,7 @@ export const ArticleListCell = (props) => (
       <div>
         <p>
           <span>
-            <Icon type="calendar" />
+            <Icon type="canlender" />
             &nbsp;{props.data.time}
           </span>
           <span>

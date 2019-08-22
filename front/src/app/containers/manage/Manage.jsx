@@ -1,15 +1,14 @@
 import React, { Component, } from 'react';
+import loadable from '@loadable/component';
 import { connect, } from 'react-redux';
 import { Switch, } from 'react-router-dom';
 import { Layout, } from 'antd';
-import ManageHeader from './ManageHeader';
-import NavList from './NavList';
 import { actions, } from '@/reducers/manageReducer';
-import routeConfig from './routeConfig';
-import RouteGuard from './RouteGuard';
-import style from './style.css';
 
 const { Sider, Content, } = Layout;
+const ManageHeader = loadable(()=>import('./ManageHeader'));
+const NavList = loadable(()=>import('./NavList'));
+const RouteGuard = loadable(()=>import('./RouteGuard'));
 
 class Manage extends Component {
     componentDidMount() {
@@ -35,13 +34,13 @@ class Manage extends Component {
         return (<>
             <Layout>
                 <ManageHeader {...{ ...this.props, userInfo, }} />
-                <Layout className={style.layout}>
+                <Layout style={{minHeight:'86vh', }}>
                     <Sider>
                         <NavList {...{ ...this.props, userInfo, }} />
                     </Sider>
                     <Content>
                         <Switch>
-                            <RouteGuard routes={routeConfig} location={this.props.location} userInfo={userInfo} manage_error={this.manage_error} logout={this.logout} />
+                            <RouteGuard location={this.props.location} userInfo={userInfo} manage_error={this.manage_error} logout={this.logout} />
                         </Switch>
                     </Content>
                 </Layout>

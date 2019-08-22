@@ -53,7 +53,6 @@ class IndexPage extends PureComponent {
   }
 }
 function mapStateToProps(state) {
-  // debugger;
   return {
     notification: state.globalState.msg,
     userInfo: state.globalState.userInfo,

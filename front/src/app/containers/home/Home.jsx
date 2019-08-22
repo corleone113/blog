@@ -1,10 +1,12 @@
 import React, { PureComponent, } from 'react';
+import loadable from '@loadable/component';
 import { Pagination, } from 'antd';
 import { connect, } from 'react-redux';
 import { actions as frontActions, } from '@/reducers/frontReducer';
-import ArticleList from '@/components/article/Articles';
 import PropTypes from 'prop-types';
 import style from './style.css';
+
+const ArticleList = loadable(()=>import('@/components/article/Articles'));
 
 class Home extends PureComponent {
   static defaultProps = {

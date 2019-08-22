@@ -1,19 +1,26 @@
 import React, { Component, } from 'react';
+import loadable from '@loadable/component';
 import { connect, } from 'react-redux';
-import { Card, Table, Button, Modal, Form, Input, Popconfirm, } from 'antd';
+import { Card, Table, Button, Popconfirm, } from 'antd';
 import { actions as manageActions, } from '@/reducers/manageReducer';
+import { manager, } from '@/constants';
+
+const SearchForm = loadable(() => import('@/components/searchForm'));
+const EditModal = loadable(() => import('./components/EditModal'));
 
 const entity = 'tag';
 const relative = 'article';
 class Role extends Component {
     componentDidMount() {
-        this.props.manage_change({selectedRows:[], selectedRowKeys:[], });
+        this.props.manage_change({ selectedRows: [], selectedRowKeys: [], });
         this.props.manage_get(entity, this.query());
     }
-    query = ()=> ({
-        creator: JSON.parse(sessionStorage.getItem('info')).username,
-        pageNum: 1,
-    });
+    query = () => {
+        return manager() === 'admin' ? { pageNum: 1, } : {
+            pageNum: 1,
+            creator: manager(),
+        };
+    };
     onAdd = () => {
         this.props.manage_change({ editVisible: true, });
     }
@@ -27,7 +34,7 @@ class Role extends Component {
             this.props.manage_change({ editVisible: false, });
         }
         const tag = { name: values.name, creator: this.query().creator, };
-        this.props.manage_create(entity, tag, this.query());
+        this.props.manage_create(entity, tag, { ...this.query(), pageNum: this.props.pageNum, });
     }
     getSets = (query, article) => {
         const result = {};
@@ -40,15 +47,16 @@ class Role extends Component {
         return result;
     }
     onDel = (record) => {
-        this.props.manage_relative_delete(entity, relative, [{ tags: record.name, }, ], this.getSets, record._id, null, this.query());
+        this.props.manage_relative_change(entity, relative, [{ tags: record.name, }, ], this.getSets, record._id, null, { ...this.query(), pageNum: this.props.pageNum, }, true);
     }
     onDelAll = () => {
+        console.log('In the tag the props:', this.props);
         const querys = [];
         for (const tag of this.props.selectedRows) {
             querys.push({ tags: tag.name, });
         }
         // this.props.manage_get_all('article', querys);
-        this.props.manage_relative_delete(entity, relative, querys, this.getSets, '', { ids: this.props.selectedRowKeys, }, this.query());
+        this.props.manage_relative_change(entity, relative, querys, this.getSets, '', { ids: this.props.selectedRowKeys, }, { ...this.query(), pageNum: this.props.pageNum, }, true);
     }
     onSearch = () => {
         const values = this.searchForm.props.form.getFieldsValue();
@@ -140,6 +148,8 @@ class Role extends Component {
                         // where={where}
                         onSearch={this.onSearch}
                         wrappedComponentRef={inst => this.searchForm = inst}
+                        label="标签名称"
+                        fieldName="name"
                     />
                 </Card>
                 <Card>
@@ -176,52 +186,10 @@ class Role extends Component {
     }
 }
 
-@Form.create()
-class SearchForm extends React.Component {
-    render() {
-        const { form: { getFieldDecorator, }, onSearch, } = this.props;
-        return (
-            <Form layout="inline">
-                <Form.Item label="标签名称">
-                    {getFieldDecorator('name', {
-                        initialValue: '',
-                    })(
-                        <Input onPressEnter={onSearch} />
-                    )}
-                </Form.Item>
-                <Form.Item>
-                    <Button onClick={onSearch} shape="circle" icon="search" />
-                </Form.Item>
-            </Form>
-        );
-    }
-}
 
 
-@Form.create()
-class EditModal extends React.Component {
-    render() {
-        const { visible, onOk, onCancel, form: { getFieldDecorator, }, } = this.props;
-        return (
-            <Modal
-                title="添加标签"
-                visible={visible}
-                onOk={onOk}
-                onCancel={onCancel}
-                destroyOnClose
-            >
-                <Form>
 
-                    <Form.Item label="标签名称">
-                        {getFieldDecorator('name')(
-                            <Input onPressEnter={onOk} autoFocus />
-                        )}
-                    </Form.Item>
-                </Form>
-            </Modal>
-        );
-    }
-}
+
 function mapStateToProps(state) {
     return {
         // userInfo: state.manage.userInfo,

@@ -12,11 +12,6 @@ install:
 branches:
   only:
     - master
-# 执行脚本之前的浏览器启动配置
-# before_script:
-#   # - export CHROME_BIN=chromium-browser
-#   - export DISPLAY=:99.0
-  # - sh -e /etc/init.d/xvfb start
 # 要执行的脚本
 script:
   - npm test

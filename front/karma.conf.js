@@ -11,10 +11,12 @@ const webpackConfig = require('./build/webpack.test.config');
 module.exports = function (config) {
     const configuration = {
         // 指定要运行测试的浏览器，可以指定多个。必须要安装对应的加载器(launcher)，karma 会在调起本地的浏览器。
-        browsers: ['Chrome', ],
-        customLaunchers: {// travis环境浏览器启动配置
-            Chrome_travis_ci: {
-                base: 'Chrome',
+        browsers: ['Chrome', 'ChromeHeadless', 'ChromeHeadlessNoSandbox', ],
+
+        // you can define custom flags
+        customLaunchers: {
+            ChromeHeadlessNoSandbox: {
+                base: 'ChromeHeadless',
                 flags: ['--no-sandbox', ],
             },
         },
@@ -64,9 +66,5 @@ module.exports = function (config) {
         // 运行一次后退出，如果设为 true，运行后会默认 watch "files" 中指定的文件，如果有修改会自动重新执行。
         singleRun: true,
     };
-    if (process.env.TRAVIS) {
-        // travis环境下使用对应的启动浏览器配置
-        configuration.browsers = ['Chrome_travis_ci', ];
-    }
     config.set(configuration);
 };

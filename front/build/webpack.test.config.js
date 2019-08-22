@@ -13,5 +13,5 @@ const config = merge(baseConfig, {
     ],
 });
 
-config.plugins = config.plugins.filter(item => !(item instanceof webpack.ProgressPlugin || item instanceof webpack.DllReferencePlugin || item instanceof AddHtmlAssets));
+config.plugins = config.plugins.filter(item => !(item instanceof webpack.DllReferencePlugin || item instanceof AddHtmlAssets));// 去掉dll依赖，以为只有在index.html能访问dll对应的库
 module.exports = config;

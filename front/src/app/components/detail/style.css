@@ -1,36 +1,39 @@
-.container{
+.container {
     background: #fff;
-    padding:10px;
+    padding: 10px;
 }
-.articleInfo{
+
+.articleInfo {
     display: flex;
     flex-direction: row;
     align-items: center;
-    margin:10px 0;
+    margin: 10px 0;
 }
-.articleInfo span{
+
+.articleInfo span {
     display: flex;
     align-items: center;
     justify-content: center;
     margin-right: 20px;
-    font-size: 12px;
+    font-size: 14px;
 }
-.articleInfo span img{
+
+.articleInfo span>span {
     margin-right: 5px;
 }
-.authorImg{
-    width: 20px;
-}
-.content{
+
+.content {
     line-height: 30px;
     font-size: 13px;
 }
-.content pre{
+
+.content pre {
     background: #e9e9e9;
-    margin:10px 0;
+    margin: 10px 0;
     overflow: scroll;
 }
-.content img{
+
+.content img {
     max-width: 100%;
     height: auto;
 }

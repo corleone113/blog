@@ -1,4 +1,5 @@
 import React, { PureComponent, } from 'react';
+import { Breadcrumb, Icon, } from 'antd';
 import remark from 'remark';
 import { connect, } from 'react-redux';
 import { actions, } from '@/reducers/frontReducer';
@@ -7,38 +8,43 @@ import style from './style.css';
 const { get_article_detail, } = actions;
 
 class Detail extends PureComponent {
-
   componentDidMount() {
-    // console.log('did mount props:', this.props)
     this.props.get_article_detail(this.props.location.state.id);
   }
   render() {
-    const { articleContent, title, author, viewCount, commentCount, time, } = this.props;
+    const { articleContent, title, author, viewCount, time, history: { push, }, location: { state: { tag, }, }, } = this.props;
     return (
-      <div className={style.container}>
-        <h2>{title}</h2>
-        <div className={style.articleInfo}>
-          <span >
-            <img className={style.authorImg}
-              src={require('./author.png')}
-            /> {author}
-          </span>
-          <span>
-            <img src={require('./calendar.png')} /> {time}
-          </span>
-          <span>
-            <img src={require('./comments.png')} /> {commentCount}
-          </span>
-          <span>
-            <img src={require('./views.png')} /> {viewCount}
-          </span>
+      <>
+        <Breadcrumb separator=">">
+          <Breadcrumb.Item onClick={() => {
+            const path = tag === '首页' ? '/public' : `/public/${tag}`;
+            push(path);
+          }}><span style={{ cursor: 'pointer', fontWeight: 'bold', }}>{tag}</span></Breadcrumb.Item>
+          <Breadcrumb.Item><span>正文</span></Breadcrumb.Item>
+        </Breadcrumb>
+        <div className={style.container}>
+          <h2>{title}</h2>
+          <div className={style.articleInfo}>
+            <span >
+              <Icon type="user" />
+              &nbsp;{author}
+            </span>
+            <span>
+              <Icon type="calendar" />
+              &nbsp;{time}
+            </span>
+            <span>
+              <Icon type="eye" />
+              &nbsp;{viewCount}
+            </span>
+          </div>
+          <div className={style.content}
+            id="preview"
+          >
+            {remark().use(remark2React).processSync(articleContent).contents}
+          </div>
         </div>
-        <div className={style.content}
-          id="preview"
-        >
-          {remark().use(remark2React).processSync(articleContent).contents}
-        </div>
-      </div>
+      </>
     );
   }
 

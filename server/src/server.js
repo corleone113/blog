@@ -7,8 +7,7 @@
  * 3：后端错误
  */
 import Express from 'express';
-import fs from 'fs';
-import path from 'path';
+import Promise from 'bluebird';
 import config from '../config';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
@@ -18,13 +17,8 @@ import admin from './controller/admin';
 import front, {
     init,
 } from './controller/public';
-import {
-    responseClient,
-    verifyToken,
-} from './util';
 
 const app = new Express();
-const configPath = path.resolve(__dirname, '../config/index.js');
 
 app.use(bodyParser.urlencoded({
     extended: false,
@@ -41,28 +35,12 @@ app.use(session({
         // maxAge: 20 * 1000,
     }, //过期时间
 }));
-app.all('/admin/manage/*', async (req, res, next) => {
-    try {
-        if (!req.session.token) {
-            console.log('过期会话:', req.session);
-            return responseClient(res, 203, 2, '会话已过期，请重新登录', null);
-        }
-        const data = fs.readFileSync(configPath);
-        const secret = data.toString().match(/jwtSecret:'([\S\s]*)',/)[1];
-        await verifyToken(req.session.token, secret);
-        // console.log('The user:', user);
-        next();
-    } catch (err) {
-        console.log('the error:', err);
-        responseClient(res, 200, 1, '验证失败', err);
-    }
-});
 //展示页面路由
 app.use('/', front);
 //管理页面路由
 app.use('/admin', admin);
 
-mongoose.Promise = require('bluebird');
+mongoose.Promise = Promise;
 mongoose.connect(`mongodb://${config.dbHost}:${config.dbPort}/blog`, {
     useNewUrlParser: true,
 }, function (err) {

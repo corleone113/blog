@@ -11,7 +11,7 @@ export const loginBannerImages = [
     require('static/bannerImages/banner_slide_05.jpg'),
 ];
 export const excludeResources = [
-    '资源管理',
+    '权限管理',
     '博客管理',
 ];
 export const manager = () => JSON.parse(sessionStorage.getItem('info')).username;

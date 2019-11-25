@@ -1,11 +1,11 @@
 import React, { PureComponent, } from 'react';
-import {Icon, } from 'antd';
+import { Icon, } from 'antd';
 import style from './style.css';
 
 export const ArticleListCell = (props) => (
   <div className={`${style.container} `}
     onClick={() => {
-      props.history.push(`/public/detail/${props.data._id}`, { id: props.data._id, });
+      props.history.push(`/public/detail/${props.data._id}`, { id: props.data._id, tag: props.tag, });
     }}
   >
     <div>
@@ -56,6 +56,7 @@ export default class extends PureComponent {
             <ArticleListCell data={item}
               history={this.props.history}
               key={index}
+              tag={this.props.tag}
             />
           ))
         }

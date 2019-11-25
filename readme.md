@@ -3,36 +3,36 @@
 
 ## 项目运行效果
 - 首页
-![home](./screenshots/%E9%A6%96%E9%A1%B5.png)
+![home](./screenshots/home.png)
 
 - 文章详情页
 
-![article_detail](./screenshots/%E6%96%87%E7%AB%A0%E8%AF%A6%E6%83%85.png)
+![article_detail](./screenshots/detail.png)
 
 - 登录
 
-![signin](./screenshots/%E7%99%BB%E5%BD%95.png)
+![signin](./screenshots/signin.png)
 
 - 注册
 
-![signup](./screenshots/%E6%B3%A8%E5%86%8C.png)
+![signup](./screenshots/signup.png)
 
 - 角色管理
 
-![role_mange](./screenshots/%E8%A7%92%E8%89%B2%E7%AE%A1%E7%90%86.png)
+![role_mange](./screenshots/role.png)
 
 - 用户管理
 
-![user_mange](./screenshots/%E7%94%A8%E6%88%B7%E7%AE%A1%E7%90%86.png)
+![user_mange](./screenshots/user.png)
 
 - 标签管理
 
-![tag_mange](./screenshots/%E6%A0%87%E7%AD%BE%E7%AE%A1%E7%90%86.png)
+![tag_mange](./screenshots/tag.png)
 
 - 文章管理
 
-![article_mange](./screenshots/%E6%96%87%E7%AB%A0%E7%AE%A1%E7%90%861.png)
-![article_mange](./screenshots/%E6%96%87%E7%AB%A0%E7%AE%A1%E7%90%862.png)
+![article_mange](./screenshots/article1.png)
+![article_mange](./screenshots/article2.png)
 
 ## 运行
 

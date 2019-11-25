@@ -4,10 +4,10 @@ import { Form, Input, Button, } from 'antd';
 @Form.create()
 class SearchForm extends React.Component {
     render() {
-        const { form: { getFieldDecorator, }, onSearch, fieldName, } = this.props;
+        const { form: { getFieldDecorator, }, onSearch, fieldName, label, } = this.props;
         return (
             <Form layout="inline">
-                <Form.Item label="用户名">
+                <Form.Item label={label}>
                     {getFieldDecorator(fieldName, {
                         initialValue: '',
                     })(

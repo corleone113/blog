@@ -5,12 +5,12 @@ import { Card, Table, Button, } from 'antd';
 import { actions as manageActions, } from '@/reducers/manageReducer';
 
 const entity = 'user';
-const SearchForm = loadable(()=>import('@/components/searchForm'));
-const UserModal = loadable(()=>import('./components/UserModal'));
+const SearchForm = loadable(() => import('@/components/searchForm'));
+const UserModal = loadable(() => import('./components/UserModal'));
 
 class User extends Component {
     componentDidMount() {
-        this.props.manage_change({selectedRows:[], selectedRowKeys:[], });
+        this.props.manage_change({ selectedRows: [], selectedRowKeys: [], });
         this.props.manage_get(entity, this.query());
         this.props.manage_get_all('role');
     }
@@ -27,9 +27,8 @@ class User extends Component {
             return memo;
         }, {});
         const finalQuery = { ...this.query(), ...where, };
-        if (finalQuery.username && Object.keys(where).length>0) {
+        if (finalQuery.username && Object.keys(where).length > 0) {
             finalQuery.username = JSON.stringify(finalQuery.username);
-            console.log('User query:', finalQuery);
         }
         if (finalQuery.username === '"admin"') {
             delete finalQuery.username;
@@ -43,7 +42,7 @@ class User extends Component {
             this.props.manage_change({ userVisible: false, });
         } else {
             const defaultRole = this.props.roles.find(role => role.name !== '系统管理员');
-            this.props.manage_change({ userVisible: true, targetRole: defaultRole.name, });
+            this.props.manage_change({ userVisible: true, targetRole: defaultRole.name, targetKeys: [], });
         }
     }
     setUserRoleCancel = () => {
@@ -58,7 +57,7 @@ class User extends Component {
             for (let i = 0; i < ids.length; ++i) {
                 sets.push({ role: this.props.targetRole, });
             }
-            this.props.manage_set(entity, { ids, sets, }, {...this.query(), pageNum:this.props.pageNum, });
+            this.props.manage_set(entity, { ids, sets, }, { ...this.query(), pageNum: this.props.pageNum, });
         }
     }
     onUserChange = (targetKeys) => {
@@ -142,7 +141,7 @@ class User extends Component {
                         // where={where}
                         onSearch={this.onSearch}
                         wrappedComponentRef={inst => this.searchForm = inst}
-                        label="用户名"
+                        label="用户名称"
                         fieldName="username"
                     />
                 </Card>
@@ -183,7 +182,6 @@ class User extends Component {
 
 function mapStateToProps(state) {
     return {
-        // userInfo: state.manage.userInfo,
         ...state.manage,
         isFetching: state.globalState.isFetching,
     };

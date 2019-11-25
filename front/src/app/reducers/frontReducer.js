@@ -4,15 +4,18 @@ import {
 import {
     combineReducers,
 } from 'redux';
-const initialState = {
+const articleInitState = {
     category: [],
     articleList: [],
     articleDetail: {},
     pageNum: 1,
     total: 0,
 };
+const tagInitState = {
+    list: [],
+};
 export const actions = {
-    get_article_list: function (tag = '', pageNum = 1, pageSize=5,) {
+    get_article_list: function (tag = '', pageNum = 1, pageSize = 5) {
         return {
             type: frontActions.GET_ARTICLE_LIST,
             tag,
@@ -31,33 +34,52 @@ export const actions = {
             type: frontActions.GET_ALL_TAGS,
         };
     },
+    provide_api: function (api) {
+        return {
+            type: frontActions.PROVIDE_API,
+            api,
+        };
+    },
 };
 
-function articleReducer(state = initialState, action) {
+function articleReducer(state = articleInitState, action) {
     switch (action.type) {
         case frontActions.GET_ARTICLE_LIST_RES:
+            const {
+                list, pageNum, total,
+            } = action.data;
             return {
-                ...state, articleList: [...action.data.list, ], pageNum: action.data.pageNum, total: action.data.total,
+                ...state, articleList: [...list, ], pageNum, total,
             };
         case frontActions.GET_ARTICLE_DETAIL_RES:
             return {
                 ...state, articleDetail: action.data,
             };
-        default:
-            return state;
+        case frontActions.PROVIDE_API:
+            return {
+                ...state, fn: action.api,
+            };
+            default:
+                return state;
     }
 }
 
-function tagReducer(state = [], action) {
+function tagReducer(state = tagInitState, action) {
     switch (action.type) {
         case frontActions.GET_ALL_TAGS_RES:
-            return ['首页', ...action.data, ];
+            const {
+                list,
+                user,
+            } = action;
+            return {
+                ...tagInitState, list: ['首页', ...list, ], user,
+            };
         default:
             return state;
     }
 }
 
-export const reducer=combineReducers({
-    articles:articleReducer,
-    tags:tagReducer,
+export const reducer = combineReducers({
+    articles: articleReducer,
+    tags: tagReducer,
 });

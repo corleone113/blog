@@ -8,14 +8,12 @@ import config from '../../config';
 import {
     status,
 } from '../constants';
-// import {
-//     status,
-// } from '../constants';
 import {
     responseClient,
     initDB,
     SHA2_SUFFIX,
     sha2,
+    verifyToken,
 } from '../util';
 
 const router = Express.Router();
@@ -26,12 +24,27 @@ const {
     resources,
 } = config;
 
-// router.use('/user', require('./user'));
+// 验证当前是否已登录，若已经登录则返回用户信息
+router.get('*', async (req, res, next) => {
+    const {
+        token,
+        secret,
+    } = req.session;
+    let user = null;
+    if (token) {
+        user = await verifyToken(token, secret);
+    }
+    req.user = user;
+    next();
+});
 //获取全部标签
 router.get('/getAllTags', async function (req, res) {
     try {
         const tags = await tagService.findAll(null);
-        responseClient(res, 200, 0, '', tags);
+        responseClient(res, 200, 0, '', {
+            list: tags,
+            user: req.user,
+        });
     } catch (err) {
         responseClient(res, 200, 1, '获取标签失败', err);
     }
@@ -50,11 +63,11 @@ router.get('/getArticles', function (req, res) {
     articleService.find(query, r => {
         switch (r.status) {
             case status.SUCCESS:
-                return responseClient(res, 200, 0, '', r.data);
+                return responseClient(res, 200, 0, '', {...(r.data), user:req.user, });
             case status.QUERY_ERROR:
                 return responseClient(res, 200, 1, '获取文章列表失败!', null);
         }
-    }, '_id title isPublish author viewCount commentCount time coverImg content');
+    }, '_id title isPublish author viewCount commentCount time coverImg');
 });
 //获取文章详情
 router.get('/getArticleDetail', async (req, res) => {
@@ -71,7 +84,7 @@ router.get('/getArticleDetail', async (req, res) => {
         }, r => {
             switch (r.status) {
                 case status.SUCCESS:
-                    return responseClient(res, 200, 0, '', articleDetail[0]);
+                    return responseClient(res, 200, 0, '', {...articleDetail[0], user:req.user, });
                 case status.UPDATE_ERROR:
                     throw new Error(r.data);
             }

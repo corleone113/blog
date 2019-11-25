@@ -36,7 +36,7 @@ class Role extends Component {
         }
         const ids = [values.id, ];
         const sets = [{ name: values.name, }, ];
-        this.props.isCreate ? this.props.manage_create(entity, values, {...this.query(), pageNum:this.props.pageNum, }) : this.props.manage_relative_change(entity, relative, [{role: this.props.record.name, }, ], this.toSet(values.name), '', { ids, sets, }, {...this.query(), pageNum:this.props.pageNum, }, false);
+        this.props.isCreate ? this.props.manage_create(entity, values, { ...this.query(), pageNum: this.props.pageNum, }) : this.props.manage_relative_change(entity, relative, [{ role: this.props.record.name, }, ], this.toSet(values.name), '', { ids, sets, }, { ...this.query(), pageNum: this.props.pageNum, }, false);
     }
     onEdit = (record) => {
         this.props.manage_change({ editVisible: true, record, isCreate: false, });
@@ -48,7 +48,6 @@ class Role extends Component {
         this.props.manage_relative_change(entity, relative, [{ role: record.name, }, ], this.toRemove, record._id, null, { ...this.query(), pageNum: this.props.pageNum, }, true);
     }
     onDelAll = () => {
-        console.log('the selectedKeys:', this.props.selectedRowKeys);
         const querys = [];
         for (const role of this.props.selectedRows) {
             querys.push({ role: role.name, });
@@ -98,24 +97,19 @@ class Role extends Component {
     }
     setRoleResourceOk = () => {
         const getResourceParent = (keys, resources) => {
-            console.log('the array:', keys, resources);
-            let neededKeys = [];
             for (const key of keys) {
                 for (const resource of resources) {
                     if (resource.name === key && resource.parent !== '' && !keys.includes(resource.parent))
-                        neededKeys.push(resource.parent);
+                        keys.push(resource.parent);
                     if (resource.children.length > 0) {
-                        neededKeys = neededKeys.concat(getResourceParent(keys, resource.children));
+                        getResourceParent(keys, resource.children);
                     }
                 }
             }
-            return neededKeys;
         };
-        const finalKeys = getResourceParent(this.props.checkedKeys, this.props.resources).concat(this.props.checkedKeys);
-        console.log('the final keys:', finalKeys);
+        getResourceParent(this.props.checkedKeys, this.props.resources);
         const ids = [this.props.record._id, ];
-        const sets = [{ resources: finalKeys, }, ];
-        // console.log('role resource ids and sets', ids, sets);
+        const sets = [{ resources: this.props.checkedKeys, }, ];
         this.props.manage_set(entity, { ids, sets, }, { ...this.query(), pageNum: this.props.pageNum, });
     }
     render() {
@@ -250,7 +244,6 @@ class Role extends Component {
 
 function mapStateToProps(state) {
     return {
-        // userInfo: state.manage.userInfo,
         ...state.manage,
         isFetching: state.globalState.isFetching,
     };

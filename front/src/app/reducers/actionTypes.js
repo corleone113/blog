@@ -5,6 +5,7 @@ export const frontActions = {
   GET_ARTICLE_DETAIL_RES: 'RESPONSE_ARTICLE_DETAIL',
   GET_ALL_TAGS: 'GET_ALL_TAGS',
   GET_ALL_TAGS_RES: 'GET_ALL_TAGS_RES',
+  PROVIDE_API: 'PROVIDE_API',
 };
 export const defaultActions = {
   FETCH_START: 'FETCH_START',

@@ -18,7 +18,6 @@ export function* signUpOrInFlow(method) {
     );
     const url = req.isSignIn ? '/admin/signin' : '/admin/signup';
     const res = yield call(method, post, url, req.payload);
-    console.log('saga signup res:', res);
     if (!(res.code === 0 && req.isSignIn)) {
       yield put({
         type: defaultActions.SET_MESSAGE,

@@ -87,7 +87,6 @@ export function* manageGetFlow(method) {
         if (where && Object.keys(where).length > 0) {
             url += `&${querystring.stringify(where)}`;
         }
-        console.log('the where:', where, querystring.stringify(where));
         const res = yield call(method, get, url);
         if (res.code !== 0 || res.data === null) {
             yield call(setMessage, res);
@@ -218,7 +217,6 @@ export function* manageRelativeDeleteFlow(method) {
                     ids,
                     sets,
                 };
-                console.log('the setData:', setData);
                 yield call(request, {
                     url: `admin/manage/${relative}`,
                     method: 'PUT',

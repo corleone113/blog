@@ -29,11 +29,21 @@ axios.interceptors.response.use(function (res) {
 });
 
 
-export function get(url) {
+export function get(url, options, ) {
+    if (options && Object.getPrototypeOf(options) === Object.prototype)
+        return axios.get(url, {
+            ...config,
+            ...options,
+        });
     return axios.get(url, config);
 }
 
-export function post(url, data) {
+export function post(url, data, options) {
+    if (options && Object.getPrototypeOf(options) === Object.prototype)
+        return axios.post(url, data, {
+            ...config,
+            ...options,
+        });
     return axios.post(url, data, config);
 }
 
@@ -46,7 +56,6 @@ export function request(otherConfig) {
         },
         transformRequest: [
             function (data) {
-                console.log('the request data:', data);
                 return JSON.stringify(data);
             },
         ],

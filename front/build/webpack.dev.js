@@ -6,7 +6,7 @@ const OpenPlugin = require('open-browser-webpack-plugin');
 module.exports = merge(baseConfig, {
     mode: 'development',
     entry: {
-        index: [
+        main: [
             `webpack-hot-middleware/client?path=http://${config.host}:${config.port}/__hmr`,
         ],
     },
@@ -14,9 +14,6 @@ module.exports = merge(baseConfig, {
         new webpack.HotModuleReplacementPlugin(),
         new OpenPlugin({
             url: `http://${config.host}:${config.port}`,
-        }),
-        new webpack.DefinePlugin({
-            'progress.env.NODE_ENV': JSON.stringify('development'),
         }),
     ],
 });

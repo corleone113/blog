@@ -6,11 +6,11 @@ const { Header, } = Layout;
 const icon = require('./blog.png');
 export default class extends React.Component {
     render() {
-        const { userInfo, manage_logout, history: { push, }, } = this.props;
+        const { userInfo, manage_logout, history: { push, }, get_all_tags, } = this.props;
         const toolbarPayload = {
-            items: [{ title: '首页', todo: () => push('/'), },
+            items: [{ title: '首页', todo: () => { push('/'); get_all_tags(); }, },
             { title: '退出', todo: manage_logout, }, ],
-            title: `欢迎, ${userInfo?userInfo.username:''}`,
+            title: `欢迎, ${userInfo ? userInfo.username : ''}`,
             overClass: styles.toolbar,
         };
         return (

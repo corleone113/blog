@@ -4,6 +4,7 @@ import { connect, } from 'react-redux';
 import { Switch, } from 'react-router-dom';
 import { Layout, } from 'antd';
 import { actions, } from '@/reducers/manageReducer';
+import { actions as frontActions, } from '@/reducers/frontReducer';
 
 const { Sider, Content, } = Layout;
 const ManageHeader = loadable(()=>import('./ManageHeader'));
@@ -25,12 +26,12 @@ class Manage extends Component {
             location: { pathname, },
             history,
         } = this.props;
-        sessionStorage.clear();
+        typeof sessionStorage !== 'undefined' && sessionStorage.clear();
         // 在浏览器url不为/login时才重定向，避免管理页面发起多个请求时因会话过期而多次重定向到login页面
         pathname !== '/login' && history.push('/login');
     }
     render() {
-        const userInfo = JSON.parse(sessionStorage.getItem('info'));
+        const userInfo = typeof sessionStorage !== 'undefined' ?JSON.parse(sessionStorage.getItem('info')):null;
         return (<>
             <Layout>
                 <ManageHeader {...{ ...this.props, userInfo, }} />
@@ -51,8 +52,8 @@ class Manage extends Component {
 
 function mapStateToProps(state) {
     return {
-        manage:state.manage,
+        ...state.manage,
     };
 }
 
-export default connect(mapStateToProps, actions)(Manage);
+export default connect(mapStateToProps, {...actions, ...frontActions, })(Manage);

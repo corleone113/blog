@@ -1,51 +1,50 @@
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const AddHtmlAssets = require('add-asset-html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const {
     CleanWebpackPlugin,
 } = require('clean-webpack-plugin');
+const HappyPack = require('happypack');
+const LoadablePlugin = require('@loadable/webpack-plugin');
 const path = require('path');
 const chalk = require('chalk');
 const handler = (percentage, message, ...args) => {
-    // e.g. Output each progress message directly to the console:
     console.info(chalk.green(`${parseInt(percentage*100)}%`), chalk.yellow(message), chalk.blue(...args));
 };
-
-const devMode = process.env.NODE_ENV !== 'production';
-const rootPath = path.resolve(__dirname, '../');
-
+const right_path=process.cwd();// 不能使用__dirname，因为它在server打包后的文件中是错误的路径。
 module.exports = {
+    context: right_path,
     entry: {
-        index: [
+        main: [
             '@babel/polyfill',
-            path.resolve(rootPath, 'src/app/index.jsx'),
+            './src/app/index.jsx',
         ],
     },
     output: {
-        path: path.resolve(rootPath, 'dist'),
+        path: path.join(right_path, 'dist'),
         publicPath: '/',
         filename: '[name]-[hash:9].js',
-        chunkFilename: '[name]-[hash:9].js',
+        chunkFilename: '[id]-[contenthash:9]-[chunkhash:9].js',
     },
     resolve: {
         alias: {
-            '@': path.resolve(rootPath, 'src/app'),
-            'static': path.resolve(rootPath, 'static'),
+            '@': path.join(right_path, 'src/app'),
+            'static': path.join(right_path, 'static'),
         },
         extensions: ['.js', '.jsx', '.css', ],
     },
-    devtool: 'cheap-module-eval-source-map',
+    devtool: 'eval-source-map',
     optimization: {
         splitChunks: {
             chunks: 'all',
             minSize: 0,
             minChunks: 2,
+            name: true,
             cacheGroups: {
                 'antd-vendors': {
-                    test: (module) => (/antd/.test(module.context)),
-                    priority: 1,
-                    minChunks: 8,
+                    test: /antd/,
+                    priority: 2,
+                    minSize: 0,
                     reuseExistingChunk: false,
                 },
                 default: false,
@@ -56,7 +55,7 @@ module.exports = {
         rules: [{
                 test: /\.jsx?$/,
                 exclude: /node_modules/,
-                use: 'babel-loader',
+                loader: 'happypack/loader?id=jsx',
             },
             {
                 test: /\.css$/,
@@ -71,7 +70,6 @@ module.exports = {
                         loader: 'css-loader',
                         options: {
                             modules: true,
-                            // importLoaders: 2,
                         },
                     },
                     'postcss-loader',
@@ -80,8 +78,7 @@ module.exports = {
             {
                 test: /\.css$/,
                 include: /node_modules/,
-                use: ['style-loader',
-                    {
+                use: [{
                         loader: MiniCssExtractPlugin.loader,
                         options: {
                             hmr: process.env.NODE_ENV === 'development',
@@ -93,7 +90,9 @@ module.exports = {
             },
             {
                 test: /\.less$/,
-                use: ['style-loader', 'css-loader', 'postcss-loader', {
+                use: [{
+                    loader: MiniCssExtractPlugin.loader,
+                }, 'css-loader', 'postcss-loader', {
                     loader: 'less-loader',
                     options: {
                         javascriptEnabled: true,
@@ -120,33 +119,21 @@ module.exports = {
         new CleanWebpackPlugin(),
         new webpack.NoEmitOnErrorsPlugin(),
         new webpack.optimize.AggressiveMergingPlugin(),
-        new webpack.DllReferencePlugin({
-            manifest: path.resolve(rootPath, 'dll', 'react.manifest.json'),
-        }),
-        new webpack.DllReferencePlugin({
-            manifest: path.resolve(rootPath, 'dll', 'redux.manifest.json'),
-        }),
-        new webpack.DllReferencePlugin({
-            manifest: path.resolve(rootPath, 'dll', 'other.manifest.json'),
-        }),
         new HtmlWebpackPlugin({
             template: './template/index.html',
-            chunks: ['index', 'antd-vendors', ],
+            chunks: ['main', ],
         }),
-        new AddHtmlAssets([{
-                filepath: path.resolve(rootPath, 'dll', 'react.dll.js'),
-            },
-            {
-                filepath: path.resolve(rootPath, 'dll', 'redux.dll.js'),
-            },
-            {
-                filepath: path.resolve(rootPath, 'dll', 'other.dll.js'),
-            },
-        ]),
         new MiniCssExtractPlugin({
-            filename: devMode ? '[name].css' : '[name].[hash].css',
-            chunkFilename: devMode ? '[id].css' : '[id].[hash].css',
+            filename: '[name][hash:9].css',
+            chunkFilename: '[id]-[contenthash:9]-[chunkhash:9].css',
+            ignoreOrder: true,
+        }),
+        new HappyPack({
+            id: 'jsx',
+            threads: 4,
+            loaders: ['babel-loader', ],
         }),
         new webpack.ProgressPlugin(handler),
+        new LoadablePlugin(),
     ],
 };

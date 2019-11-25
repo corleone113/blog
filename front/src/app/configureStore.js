@@ -9,13 +9,18 @@ const sagaMiddleware = createSagaMiddleware();
 
 
 export default function configureStore(initialState = {}) {
-    const store = createStore(rootReducer, initialState, applyMiddleware(sagaMiddleware));
-    sagaMiddleware.run(rootSaga);
+    let store;
+    const getNewStore = (reducer, saga) => {
+        store = createStore(reducer, initialState, applyMiddleware(sagaMiddleware));
+        sagaMiddleware.run(saga);
+    };
+    getNewStore(rootReducer, rootSaga);
     if (module.hot && process.env.NODE_ENV !== 'production') {
         // Enable Webpack hot module replacement for reducers
-        module.hot.accept('./reducers', () => {
-            const nextRootReducer = require('./reducers/index');
-            store.replaceReducer(nextRootReducer);
+        module.hot.accept(['./sagas', './reducers', ], () => {
+            const nextRootReducer = require('./reducers');
+            const nextSaga = require('./sagas');
+            getNewStore(nextRootReducer, nextSaga);
         });
     }
     return store;

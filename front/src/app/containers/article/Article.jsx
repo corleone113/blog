@@ -17,7 +17,6 @@ class AdminManagerArticle extends Component {
         this.props.manage_get(entity, this.query());
     }
     query = () => {
-        console.log('what is manager:', manager);
         return manager() === 'admin' ? {
             pageNum: this.state.recordNum,
         } : {

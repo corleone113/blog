@@ -1,6 +1,4 @@
 import express from 'express';
-import fs from 'fs';
-import path from 'path';
 import svgCaptcha from 'svg-captcha';
 import {
     sign,
@@ -19,7 +17,7 @@ import {
 } from '../../constants';
 
 const router = express.Router();
-const configPath = path.resolve(__dirname, '../../../config/index.js');
+
 
 router.get('/captcha', (req, res) => {
     const captObj = svgCaptcha.create();
@@ -31,6 +29,8 @@ router.get('/captcha', (req, res) => {
 });
 const getMenuAndSign = async (req, res, user) => {
     try {
+        if (user.role === '')
+            return responseClient(res, 203, 1, '该用户没有分配角色!', null);
         const result = await roleService.findAll({
             name: user.role,
         });
@@ -44,10 +44,8 @@ const getMenuAndSign = async (req, res, user) => {
         resources = await Promise.all(resources);
         resources = resources.map(r => r[0]);
         user.menus = resourceService.getTrees(resources);
-        const jwtSecret = config.forSecret + new Date().toLocaleString();
-        req.session.token = sign(user, jwtSecret);
-        const data = fs.readFileSync(configPath);
-        fs.writeFileSync(configPath, data.toString().replace(/(jwtSecret:)'[\S\s]*',/, `$1'${jwtSecret}',`));
+        req.session.secret = config.forSecret + new Date().toLocaleString();
+        req.session.token = sign(user, req.session.secret);
         return user;
     } catch (err) {
         console.error('Account error:', err);
@@ -71,6 +69,7 @@ router.post('/signin', async (req, res) => {
         if (sha2(password + SHA2_SUFFIX) === user.password) {
             delete user.password;
             const signedUser = await getMenuAndSign(req, res, user);
+            if (!signedUser) return;
             return responseClient(res, 200, 0, '登录成功!', signedUser);
         }
     } else if (result.length > 1) {
@@ -94,7 +93,6 @@ router.post('/signup', (req, res) => {
     if (user.password !== repassword) {
         return responseClient(res, 200, 1, '密码和确认密码不一致!', '');
     }
-    console.log(captcha, req.session.captcha);
     if (!captcha || !req.session.captcha || captcha.toLowerCase() !== req.session.captcha.toLowerCase()) {
         return responseClient(res, 200, 1, '验证码不正确或已过期!', '');
     }

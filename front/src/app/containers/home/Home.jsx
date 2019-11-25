@@ -1,16 +1,14 @@
-import React, { PureComponent, } from 'react';
-import loadable from '@loadable/component';
+import React, { Component, } from 'react';
 import { Pagination, } from 'antd';
 import { connect, } from 'react-redux';
 import { actions as frontActions, } from '@/reducers/frontReducer';
 import PropTypes from 'prop-types';
 import style from './style.css';
+import ArticleList from '@/components/article/Articles';
 
-const ArticleList = loadable(()=>import('@/components/article/Articles'));
 
-class Home extends PureComponent {
+class Home extends Component {
   static defaultProps = {
-    userInfo: {},
     pageNum: 1,
     total: 0,
     articleList: [],
@@ -24,12 +22,15 @@ class Home extends PureComponent {
     super();
   }
   componentDidMount() {
-    this.props.get_article_list(this.props.match.params.tag || '');
+    if (this.props.articleList.length === 0)
+      this.props.get_article_list(this.props.match.params.tag || '');
   }
   render() {
     const { tags, } = this.props;
-    const m = this.props.match;
-    const isTag = tags.includes(m.params.tag) || m.url === '/public';
+    const path = this.props.location.pathname;
+    const current_tag = path.split('/')[2];
+    const tag= current_tag === undefined ? '首页' : current_tag;
+    const isTag = tags.includes(tag) || path === '/public';
     return (
       <>
         {
@@ -37,8 +38,8 @@ class Home extends PureComponent {
           (< div className={style.container} >
             <ArticleList
               data={this.props.articleList}
-              getArticleDetail={this.props.get_article_detail}
               history={this.props.history}
+              tag={tag}
             />
             <div className={style.paginationContainer}>
               <Pagination
@@ -58,7 +59,7 @@ class Home extends PureComponent {
 function mapStateToProps(state) {
   const props = state.front;
   return {
-    tags: props.tags,
+    tags: props.tags.list,
     pageNum: props.articles.pageNum,
     total: props.articles.total,
     articleList: props.articles.articleList,

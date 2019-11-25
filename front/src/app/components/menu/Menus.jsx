@@ -5,8 +5,10 @@ import style from './style';
 export default class Menus extends Component {
   constructor(props) {
     super(props);
+    const path = this.props.history.location.pathname;
+    const current_tag = path.split('/')[2];
     this.state = {
-      current: '首页',
+      current: current_tag === undefined ? '首页' : current_tag,
     };
   }
   handleClick = (e) => {

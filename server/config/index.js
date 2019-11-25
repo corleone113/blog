@@ -1,8 +1,8 @@
 module.exports = {
     //数据库地址配置
-    dbHost: '192.168.31.155',
+    dbHost: '192.168.101.101',
     dbPort: '34105',
-    apiHost: '192.168.31.92',
+    apiHost: '192.168.101.102',
     apiPort: '2333',
     resources: [{
             name: '权限管理',
@@ -49,7 +49,7 @@ module.exports = {
         website: 'github.com',
         phone: '18928499214',
         address: 'chengdu',
-        role:'系统管理员',
+        role: '系统管理员',
     },
     initRoles: [{
         name: '系统管理员',
@@ -63,12 +63,11 @@ module.exports = {
         ],
     }, {
         name: '博客管理员',
-        resources:[
+        resources: [
             '博客管理',
             '标签管理',
             '文章管理',
         ],
     }, ],
-    forSecret:'corleone',
-    jwtSecret:'corleone2019-8-23 0:52:52',
+    forSecret: 'corleone',
 };

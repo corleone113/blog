@@ -50,7 +50,6 @@ class Role extends Component {
         this.props.manage_relative_change(entity, relative, [{ tags: record.name, }, ], this.getSets, record._id, null, { ...this.query(), pageNum: this.props.pageNum, }, true);
     }
     onDelAll = () => {
-        console.log('In the tag the props:', this.props);
         const querys = [];
         for (const tag of this.props.selectedRows) {
             querys.push({ tags: tag.name, });
@@ -192,7 +191,6 @@ class Role extends Component {
 
 function mapStateToProps(state) {
     return {
-        // userInfo: state.manage.userInfo,
         ...state.manage,
         isFetching: state.globalState.isFetching,
     };

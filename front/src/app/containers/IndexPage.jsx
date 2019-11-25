@@ -1,23 +1,16 @@
 import { hot, } from 'react-hot-loader/root';
 import React, { PureComponent, } from 'react';
-import loadable from '@loadable/component';
-import { BrowserRouter as Router, Route, Switch, Redirect, } from 'react-router-dom';
-import { notification, Layout, } from 'antd';
+import { BrowserRouter, Switch, } from 'react-router-dom';
+import { notification, } from 'antd';
 import 'normalize.css/normalize.css';
 import { connect, } from 'react-redux';
 import { actions, } from '../reducers';
-import style from './index.css';
+import routes from './routes';
+import Footer from '@/components/footer';
+
 const { clear_msg, } = actions;
-const { Footer, } = Layout;
-const Manage = loadable(()=>import('./manage/Manage'));
-const NotFound = loadable(()=>import('@/components/notFound/NotFound'));
-const Front = loadable(()=>import('./front/Front'));
-const Login = loadable(()=>import('./login/Login'));
 
 class IndexPage extends PureComponent {
-  constructor(props) {
-    super(props);
-  }
   componentDidUpdate() {
     if (this.props.notification && this.props.notification.content) {
       this.props.notification.type === 1 ?
@@ -33,29 +26,23 @@ class IndexPage extends PureComponent {
   }
   render() {
     return (
-      <>
-        <Router>
-          <Switch>
-            <Route component={Manage} path="/admin/manage" />
-            <Route component={Login}
-              path="/login" exact
-            />
-            <Route component={Front} path="/public" />
-            <Redirect exact from="/" to="/public" />
-            <Route component={NotFound} />
-          </Switch>
-        </Router>
-        <Footer className={style.footer}>
-          Corleone Blog @2019
-          </Footer>
-      </>
+        <>
+          <BrowserRouter>
+            <Switch>
+              {routes.map(route => {
+                const { Comp, key, ...rest } = route;
+                return <Comp key={key} {...rest} />;
+              })}
+            </Switch>
+          </BrowserRouter>
+          <Footer />
+        </>
     );
   }
 }
 function mapStateToProps(state) {
   return {
     notification: state.globalState.msg,
-    userInfo: state.globalState.userInfo,
   };
 }
 let DefaultIndex = connect(

@@ -1,4 +1,3 @@
-import mongoose from 'mongoose'
-import tagSchema from '../schemas/tags'
-
-module.exports =  mongoose.model('Tag',tagSchema);
+import mongoose from 'mongoose';
+import tagSchema from '../schemas/tags';
+export default mongoose.model('Tag', tagSchema);

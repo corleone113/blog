@@ -2,7 +2,7 @@
 //   http://karma-runner.github.io/2.0/config/configuration-file.html
 // we are also using it with karma-webpack
 //   https://github.com/webpack/karma-webpack
-const webpackConfig = require('./build/webpack.test.config');
+const webpackConfig = require('./build/webpack.test');
 // const path = require('path');
 // const {
 //     getAllTestFiles,

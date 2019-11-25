@@ -1,6 +1,7 @@
 import express from 'express';
 import {
     responseClient,
+    verifyToken,
 } from '../../util';
 import userService from '../../service/user';
 import roleService from '../../service/role';
@@ -20,6 +21,32 @@ const services = {
     article: articleService,
 };
 const router = express.Router();
+router.all('/*', async (req, res, next) => {
+    try {
+        if (!req.session.token) {
+            return responseClient(res, 203, 2, '会话已过期，请重新登录', null);
+        }
+        const {
+            token,
+            secret,
+        } = req.session;
+        const result = await verifyToken(token, secret);
+        if (!result) {
+            return responseClient(res, 203, 2, '令牌不正确!', null);
+        }
+        if (req.url === '/verify') { // 完整的路径其实是/admin/manage/verify,但这是一个子路由监听器，所以路径也是子路径，即 /verify。
+            return responseClient(res, 200, 0, '', result);
+        }
+        if (req.url === '/verify/1') {
+            delete req.session.token;
+            return responseClient(res, 200, 0, '', null);
+        }
+        next();
+    } catch (err) {
+        console.log('the error:', err);
+        responseClient(res, 200, 1, '验证失败', err);
+    }
+});
 router.use('/:type/:id?', (req, res, next) => {
     if (!services.hasOwnProperty(req.params.type)) {
         return responseClient(res, 500, 1, '方法错误', null);
@@ -87,7 +114,6 @@ router.put('/:type', (req, res) => {
         },
         params,
     } = req;
-    // console.log('the query:', req.query);
     services[params.type].update({
         ids,
         sets,

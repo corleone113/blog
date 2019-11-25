@@ -3,36 +3,36 @@
 
 ## 项目运行效果
 - 首页
-![home](./screenshots/home.png)
+![home](./screenshots/home.PNG)
 
 - 文章详情页
 
-![article_detail](./screenshots/detail.png)
+![article_detail](./screenshots/detail.PNG)
 
 - 登录
 
-![signin](./screenshots/signin.png)
+![signin](./screenshots/signin.PNG)
 
 - 注册
 
-![signup](./screenshots/signup.png)
+![signup](./screenshots/signup.PNG)
 
 - 角色管理
 
-![role_mange](./screenshots/role.png)
+![role_mange](./screenshots/role.PNG)
 
 - 用户管理
 
-![user_mange](./screenshots/user.png)
+![user_mange](./screenshots/user.PNG)
 
 - 标签管理
 
-![tag_mange](./screenshots/tag.png)
+![tag_mange](./screenshots/tag.PNG)
 
 - 文章管理
 
-![article_mange](./screenshots/article1.png)
-![article_mange](./screenshots/article2.png)
+![article_mange](./screenshots/article1.PNG)
+![article_mange](./screenshots/article2.PNG)
 
 ## 运行
 

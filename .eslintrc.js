@@ -27,7 +27,6 @@ module.exports = {
     // 'indent': ['error', 4], // 控制缩进为2
     'comma-spacing': ['error'],
     'eqeqeq': 1, // 警告使用全等
-    'quotes': [2, 'single'], //单引号
     'no-console': 0, //不禁用console
     'no-debugger': 1, //警告debugger
     'no-var': 2, //对var禁止

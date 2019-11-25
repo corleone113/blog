@@ -19,9 +19,9 @@ class ResourceService extends Base {
             if (!resource.parent) {
                 menus.add(resource);
             } else if (resource.parent && map[resource.parent].parent) {
-                const sub = map[resource.parent];
-                sub.children.push(resource);
-                menus.add(sub);
+                const parent = map[resource.parent];
+                parent.children.push(resource);
+                menus.add(parent);
             } else {
                 map[resource.parent].children.push(resource);
             }

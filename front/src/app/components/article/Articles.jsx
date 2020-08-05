@@ -40,7 +40,7 @@ export const ArticleListCell = (props) => (
           </span>
         </p>
         <span className={style.lastSpan}>
-          阅读全文 <span>></span>
+          阅读全文 <span>&gt;</span>
         </span>
       </div>
     </div>

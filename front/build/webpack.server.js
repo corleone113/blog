@@ -1,7 +1,8 @@
 const merge = require('webpack-merge');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const webpack = require('webpack');
+const AddHtmlAssets = require('add-asset-html-webpack-plugin');
 const nodeExternals = require('webpack-node-externals');
-const HappyPack = require('happypack');
 const baseConfig = require('./webpack.base');
 const path = require('path');
 const config = merge(baseConfig, {
@@ -18,13 +19,10 @@ const config = merge(baseConfig, {
     devtool: false,
 });
 
-config.plugins = config.plugins.filter(item => !(item instanceof HappyPack || item instanceof HtmlWebpackPlugin)); // 去掉dll依赖，以为只有在index.html能访问dll对应的库
-config.plugins.push(new HappyPack({
-    id: 'jsx',
-    threads: 4,
-    loaders: [{
-        loader: 'babel-loader',
-        options: {
+config.plugins = config.plugins.filter(item => !(item instanceof webpack.DllReferencePlugin || item instanceof AddHtmlAssets || item instanceof HtmlWebpackPlugin)); // 去掉dll依赖，因为只有在index.html中能访问dll对应的库
+for(const rule of config.module.rules){
+    if(rule.loader === 'babel-loader') {
+        rule.options = {
             plugins: ["react-hot-loader/babel", ["import", {
                     "libraryName": "antd",
                     "style": 'css', // 将样式文件由less改为css
@@ -36,7 +34,7 @@ config.plugins.push(new HappyPack({
                 }, ], "@babel/plugin-transform-runtime", "@babel/plugin-syntax-dynamic-import",
                 '@loadable/babel-plugin', // 添加@loadable 服务端渲染babel插件
             ],
-        },
-    }, ],
-}));
+        };
+    }
+}
 module.exports = config;

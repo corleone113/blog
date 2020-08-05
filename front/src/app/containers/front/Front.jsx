@@ -7,14 +7,15 @@ import { actions as loginActions, } from '@/reducers/loginReducer';
 import { actions as manageActions, } from '@/reducers/manageReducer';
 import style from './style.css';
 import { homeBannerImages as imgPaths, } from '@/constants';
+import loadable from '@loadable/component';
 import Home from '../home/Home';
-import Detail from '@/components/detail/Detail';
 import Banner from '@/components/banner/Banner';
 import Menus from '@/components/menu/Menus';
 import Loading from '@/components/loading/Loading';
 import Toolbar from '@/components/toolbar/Toolbar';
 
 const { manage_logout, manage_provide, } = manageActions;
+const Detail = loadable(()=>import('@/components/detail/Detail'));
 
 class Front extends Component {
   static defaultProps = {

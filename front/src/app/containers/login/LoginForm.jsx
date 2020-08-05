@@ -1,13 +1,12 @@
 import { hot, } from 'react-hot-loader/root';
-import loadable from '@loadable/component';
 import React, { Component, } from 'react';
 import { Form, Input, Icon, Radio, Button, Select, Checkbox, Cascader, AutoComplete, Col, Row, } from 'antd';
 import { addressOptions, } from './constans';
 import style from './style.css';
 import { loginBannerImages as imgPaths, } from '@/constants';
+import Banner from '@/components/banner/Banner';
 
 const FormItem = Form.Item;
-const Banner = loadable(() => import('@/components/banner/Banner'));
 
 @Form.create()
 class LoginForm extends Component {

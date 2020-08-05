@@ -11,7 +11,7 @@ const webpackConfig = require('./build/webpack.test');
 module.exports = function (config) {
     const configuration = {
         // 指定要运行测试的浏览器，可以指定多个。必须要安装对应的加载器(launcher)，karma 会在调起本地的浏览器。
-        browsers: ['Chrome', ],
+        browsers: ['Firefox', ], // 指定多个浏览器可能导致测试在浏览器启动后阻塞，所以暂时只指定一个，另外Chrome较新版本无法被karma捕获，所以不再考虑使用Chrome作为karma测试浏览器
         customLaunchers: {// travis浏览器启动环境配置
             ChromeHeadlessNoSandbox: {
                 base: 'ChromeHeadless',

@@ -1,14 +1,13 @@
 import React, { Component, } from 'react';
-import loadable from '@loadable/component';
 import { connect, } from 'react-redux';
 import style from './style.css';
 import { Pagination, Breadcrumb, Button, Empty, } from 'antd';
 import { actions, } from '@/reducers/manageReducer';
 import { manager, } from '@/constants';
+import ArticleCell from './components/ArticleCell';
+import ArticleEdit from './articleEdit/ArticleEdit';
 
 const entity = 'article';
-const ArticleCell = loadable(()=>import('./components/ArticleCell'));
-const ArticleEdit = loadable(()=>import('./articleEdit/ArticleEdit'));
 
 class AdminManagerArticle extends Component {
     state = { isEdit: false, payload: null, recordNum: 1, }

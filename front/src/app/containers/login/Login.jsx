@@ -1,12 +1,11 @@
 import React, { PureComponent, } from 'react';
-import loadable from '@loadable/component';
 import { connect, } from 'react-redux';
 import { actions as loginActions, } from '@/reducers/loginReducer';
 import { actions as manageActions, } from '@/reducers/manageReducer';
 import { actions as frontActions, } from '@/reducers/frontReducer';
+import LoginForm from './LoginForm';
 
 const captchaUrl = 'http://localhost:2333/admin/captcha';
-const LoginForm = loadable(() => import('./LoginForm'));
 
 class LoginPage extends PureComponent {
   componentDidMount() {

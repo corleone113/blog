@@ -1,15 +1,14 @@
 import React, { Component, } from 'react';
-import loadable from '@loadable/component';
 import { connect, } from 'react-redux';
 import { Switch, } from 'react-router-dom';
 import { Layout, } from 'antd';
 import { actions, } from '@/reducers/manageReducer';
 import { actions as frontActions, } from '@/reducers/frontReducer';
+import ManageHeader from './ManageHeader';
+import NavList from './NavList';
+import RouteGuard from './RouteGuard';
 
 const { Sider, Content, } = Layout;
-const ManageHeader = loadable(()=>import('./ManageHeader'));
-const NavList = loadable(()=>import('./NavList'));
-const RouteGuard = loadable(()=>import('./RouteGuard'));
 
 class Manage extends Component {
     componentDidMount() {

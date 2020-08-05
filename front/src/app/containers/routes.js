@@ -8,10 +8,12 @@ import {
 import {
     frontActions,
 } from '@/reducers/actionTypes';
-import Manage from './manage/Manage';
-import NotFound from '@/components/notFound/NotFound';
+import loadable from '@loadable/component';
 import Front from './front/Front';
-import Login from './login/Login';
+
+const Manage = loadable(()=>import('./manage/Manage'));
+const NotFound = loadable(()=>import('@/components/notFound/NotFound'));
+const Login = loadable(()=>import('./login/Login'));
 
 export const ssrLoadFns = {
     '/public': [

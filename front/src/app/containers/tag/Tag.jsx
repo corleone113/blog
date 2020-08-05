@@ -1,12 +1,11 @@
 import React, { Component, } from 'react';
-import loadable from '@loadable/component';
 import { connect, } from 'react-redux';
 import { Card, Table, Button, Popconfirm, } from 'antd';
 import { actions as manageActions, } from '@/reducers/manageReducer';
 import { manager, } from '@/constants';
+import SearchForm from '@/components/searchForm';
+import EditModal from './components/EditModal';
 
-const SearchForm = loadable(() => import('@/components/searchForm'));
-const EditModal = loadable(() => import('./components/EditModal'));
 
 const entity = 'tag';
 const relative = 'article';

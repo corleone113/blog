@@ -1,12 +1,11 @@
 import React, { Component, } from 'react';
-import loadable from '@loadable/component';
 import { connect, } from 'react-redux';
 import { Card, Table, Button, } from 'antd';
 import { actions as manageActions, } from '@/reducers/manageReducer';
+import SearchForm from '@/components/searchForm';
+import UserModal from './components/UserModal';
 
 const entity = 'user';
-const SearchForm = loadable(() => import('@/components/searchForm'));
-const UserModal = loadable(() => import('./components/UserModal'));
 
 class User extends Component {
     componentDidMount() {

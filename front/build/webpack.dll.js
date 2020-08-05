@@ -8,7 +8,6 @@ module.exports = {
     entry: {
         react: ['react', 'react-dom', 'react-router-dom', ],
         redux: ['redux', 'react-redux', 'redux-saga', ],
-        other: ['remark', 'remark-react', 'axios', 'dateformat', path.resolve(__dirname, '../src/app/configureStore'), ],
     },
     output: {
         filename: '[name].dll.js',

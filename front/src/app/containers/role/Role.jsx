@@ -1,16 +1,15 @@
 import React, { Component, } from 'react';
-import loadable from '@loadable/component';
 import { connect, } from 'react-redux';
 import { Card, Table, Button, Popconfirm, } from 'antd';
 import { actions as manageActions, } from '@/reducers/manageReducer';
 import style from './style.css';
 import { excludeResources, } from '@/constants';
+import SearchForm from '@/components/searchForm';
+import EditModal from './components/EditModel';
+import ResourceModal from './components/ResourceModal';
 
 const entity = 'role';
 const relative = 'user';
-const SearchForm = loadable(() => import('@/components/searchForm'));
-const EditModal = loadable(() => import('./components/EditModel'));
-const ResourceModal = loadable(() => import('./components/ResourceModal'));
 
 class Role extends Component {
     componentDidMount() {
